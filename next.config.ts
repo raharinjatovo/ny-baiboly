@@ -64,6 +64,23 @@ const nextConfig: NextConfig = {
   // Performance optimizations
   poweredByHeader: false,
   
+  // Ensure data files are included in builds
+  webpack: (config: any, { isServer }: any) => {
+    // Add data files to the build
+    if (isServer) {
+      config.externals = config.externals || [];
+      config.externals.push(({ request }: any, callback: any) => {
+        // Include all data files in the build
+        if (request && request.includes('/data/')) {
+          return callback();
+        }
+        callback();
+      });
+    }
+    
+    return config;
+  },
+  
   // Bundle analyzer (development only)
   ...(process.env.ANALYZE === 'true' && {
     webpack: (config: any) => {

@@ -120,7 +120,9 @@ class BibleDataRepository implements BibleRepository {
    * Get the full file path for a book
    */
   private getBookFilePath(bookMeta: BookMeta): string {
-    const dataDir = join(process.cwd(), 'data', 'baiboly-json');
+    // Use environment variable for data path, fallback to public/data
+    const dataPath = process.env.BIBLE_DATA_PATH || 'public/data';
+    const dataDir = join(process.cwd(), dataPath, 'baiboly-json');
     const testamentDir = bookMeta.testament === Testament.OLD ? 'Testameta taloha' : 'Testameta vaovao';
     return join(dataDir, testamentDir, `${bookMeta.fileName}.json`);
   }

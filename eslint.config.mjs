@@ -10,13 +10,116 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  ...compat.extends(
+    "next/core-web-vitals",
+    "next/typescript",
+    "@typescript-eslint/recommended",
+    "prettier"
+  ),
+  ...compat.plugins(
+    "@typescript-eslint",
+    "jsx-a11y",
+    "security",
+    "jest",
+    "testing-library"
+  ),
+  {
+    files: ["**/*.{js,jsx,ts,tsx}"],
+    rules: {
+      // TypeScript specific rules
+      "@typescript-eslint/no-unused-vars": ["error", { 
+        argsIgnorePattern: "^_",
+        varsIgnorePattern: "^_" 
+      }],
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/explicit-function-return-type": "off",
+      "@typescript-eslint/explicit-module-boundary-types": "off",
+      "@typescript-eslint/no-non-null-assertion": "warn",
+      "@typescript-eslint/prefer-const": "error",
+      "@typescript-eslint/no-var-requires": "error",
+
+      // Security rules
+      "security/detect-object-injection": "warn",
+      "security/detect-non-literal-require": "warn",
+      "security/detect-unsafe-regex": "error",
+
+      // Accessibility rules
+      "jsx-a11y/alt-text": "error",
+      "jsx-a11y/aria-props": "error",
+      "jsx-a11y/aria-proptypes": "error",
+      "jsx-a11y/aria-unsupported-elements": "error",
+      "jsx-a11y/click-events-have-key-events": "warn",
+      "jsx-a11y/no-access-key": "error",
+
+      // General code quality
+      "prefer-const": "error",
+      "no-var": "error",
+      "no-console": ["warn", { allow: ["warn", "error", "info"] }],
+      "no-debugger": "error",
+      "eqeqeq": ["error", "always"],
+      "curly": ["error", "all"],
+      "no-eval": "error",
+      "no-implied-eval": "error",
+      
+      // React specific
+      "react/jsx-key": "error",
+      "react/jsx-no-duplicate-props": "error",
+      "react/jsx-no-undef": "error",
+      "react/jsx-uses-react": "off", // Not needed with React 17+
+      "react/jsx-uses-vars": "error",
+      "react/no-danger": "warn",
+      "react/no-deprecated": "error",
+      "react/no-direct-mutation-state": "error",
+      "react/no-unknown-property": "error",
+      "react/react-in-jsx-scope": "off", // Not needed with React 17+
+      "react/no-unescaped-entities": "off",
+
+      // Next.js specific
+      "@next/next/no-img-element": "error",
+      "@next/next/no-page-custom-font": "error",
+      "@next/next/no-html-link-for-pages": "warn",
+    },
+  },
+  {
+    files: ["**/*.test.{js,jsx,ts,tsx}", "**/__tests__/**/*.{js,jsx,ts,tsx}"],
+    rules: {
+      // Jest rules for test files
+      "jest/no-disabled-tests": "warn",
+      "jest/no-focused-tests": "error",
+      "jest/no-identical-title": "error",
+      "jest/prefer-to-have-length": "warn",
+      "jest/valid-expect": "error",
+
+      // Testing library rules
+      "testing-library/await-async-query": "error",
+      "testing-library/no-await-sync-query": "error",
+      "testing-library/no-debugging-utils": "warn",
+      "testing-library/no-dom-import": "error",
+
+      // Allow console in tests
+      "no-console": "off",
+    },
+  },
+  {
+    files: ["e2e/**/*.{js,jsx,ts,tsx}"],
+    rules: {
+      // Allow console in e2e tests
+      "no-console": "off",
+      // Playwright specific allowances
+      "@typescript-eslint/no-non-null-assertion": "off",
+    },
+  },
   {
     ignores: [
-      "node_modules/**",
       ".next/**",
       "out/**",
-      "build/**",
+      "dist/**",
+      "coverage/**",
+      "node_modules/**",
+      "*.config.js",
+      "*.config.mjs",
+      "*.config.ts",
+      "jest.setup.js",
       "next-env.d.ts",
     ],
   },

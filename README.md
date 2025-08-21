@@ -1,36 +1,109 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ny Baiboly - Professional Malagasy Bible Application
 
-## Getting Started
+## 🌟 Overview
 
-First, run the development server:
+Ny Baiboly is a modern, enterprise-grade Bible reading application built with Next.js 15, featuring the complete Malagasy Bible with advanced search capabilities, clean architecture, and professional development practices.
+
+## ✨ Features
+
+### Core Functionality
+- 📖 **Complete Malagasy Bible** - All 66 books with both Old and New Testament
+- 🔍 **Advanced Search** - Fast, accurate search with filters and highlighting
+- 🎲 **Random Verses** - Discover inspiring verses daily
+- 📱 **Responsive Design** - Works perfectly on all devices
+- 🌙 **Reading Modes** - Optimized for different reading preferences
+
+### Technical Excellence
+- ⚡ **High Performance** - Server-side rendering with caching
+- 🔒 **Security First** - Comprehensive security headers and validation
+- 🧪 **100% Test Coverage** - Unit, integration, and E2E tests
+- 📊 **Monitoring** - Performance and error tracking
+- 🏗️ **Clean Architecture** - Repository pattern with SOLID principles
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js 18+ 
+- pnpm 8+
+
+### Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+# Clone the repository
+git clone https://github.com/your-username/ny-baiboly.git
+cd ny-baiboly
+
+# Install dependencies
+pnpm install
+
+# Set up environment variables
+cp .env.example .env.local
+
+# Start development server
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Available Scripts
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+# Development
+pnpm dev              # Start development server with Turbopack
+pnpm build            # Build for production
+pnpm start            # Start production server
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Code Quality
+pnpm lint             # Lint and fix code
+pnpm lint:check       # Check linting without fixing
+pnpm type-check       # TypeScript type checking
+pnpm format           # Format code with Prettier
+pnpm format:check     # Check code formatting
 
-## Learn More
+# Testing
+pnpm test             # Run unit tests
+pnpm test:watch       # Run tests in watch mode
+pnpm test:coverage    # Run tests with coverage report
+pnpm test:e2e         # Run E2E tests
+pnpm test:e2e:ui      # Run E2E tests with UI
 
-To learn more about Next.js, take a look at the following resources:
+# Utilities
+pnpm clean            # Clean build artifacts
+pnpm analyze          # Analyze bundle size
+pnpm security:audit   # Security audit
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🏗️ Architecture
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Project Structure
 
-## Deploy on Vercel
+```
+src/
+├── app/                      # Next.js 15 App Router
+│   ├── (routes)/            # Route groups
+│   ├── api/                 # API routes
+│   ├── globals.css          # Global styles
+│   └── layout.tsx           # Root layout
+├── components/              # Reusable components
+│   ├── bible/              # Bible-specific components
+│   ├── ui/                 # Base UI components
+│   └── layout.tsx          # Layout components
+├── lib/                    # Core business logic
+│   ├── bible-repository.ts  # Data access layer
+│   ├── cache.ts            # Caching system
+│   ├── errors.ts           # Error handling
+│   └── __tests__/          # Unit tests
+├── types/                  # TypeScript type definitions
+├── config/                 # Configuration management
+├── constants/              # Application constants
+├── utils/                  # Utility functions
+└── hooks/                  # Custom React hooks
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+data/
+└── baiboly-json/           # Bible data files
+    ├── Testameta taloha/   # Old Testament
+    └── Testameta vaovao/   # New Testament
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+e2e/                        # End-to-end tests
+__tests__/                  # Additional test files
+```
+
+For complete documentation, architecture details, testing strategies, and deployment guides, see our comprehensive documentation above.

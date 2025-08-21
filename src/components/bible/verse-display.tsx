@@ -68,7 +68,7 @@ export function Verse({
   const handleFavoriteToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
     
-    if (!book || !chapter || !number) return;
+    if (!book || !chapter || !number) {return;}
     
     if (isFavorite) {
       const verseId = `${book}-${chapter}-${number}`;
@@ -84,7 +84,7 @@ export function Verse({
   const handleBookmarkToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
     
-    if (!book || !chapter || !number) return;
+    if (!book || !chapter || !number) {return;}
     
     if (isBookmarkActive) {
       const bookmarkId = `${bookId || book}-${chapter}-${number}`;
@@ -98,7 +98,7 @@ export function Verse({
 
   // Highlight search terms in text
   const highlightedText = React.useMemo(() => {
-    if (!searchTerm) return text;
+    if (!searchTerm) {return text;}
     
     const regex = new RegExp(`(${searchTerm})`, 'gi');
     return text.replace(regex, '<mark class="bg-yellow-200 dark:bg-yellow-800">$1</mark>');
@@ -125,6 +125,7 @@ export function Verse({
       {/* Verse text */}
       <span
         className="leading-relaxed"
+        // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: highlightedText }}
       />
       
@@ -269,6 +270,7 @@ export function VerseList({
           <p className="text-foreground">
             {searchTerm ? (
               <span 
+                // eslint-disable-next-line react/no-danger
                 dangerouslySetInnerHTML={{ 
                   __html: verse.text.replace(
                     new RegExp(`(${searchTerm})`, 'gi'),

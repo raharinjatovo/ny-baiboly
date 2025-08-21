@@ -42,11 +42,11 @@ const PREFERENCES_KEY = 'ny-baiboly-preferences';
  * Get user preferences from localStorage
  */
 export function getUserPreferences(): UserPreferences {
-  if (typeof window === 'undefined') return DEFAULT_PREFERENCES;
+  if (typeof window === 'undefined') {return DEFAULT_PREFERENCES;}
   
   try {
     const stored = localStorage.getItem(PREFERENCES_KEY);
-    if (!stored) return DEFAULT_PREFERENCES;
+    if (!stored) {return DEFAULT_PREFERENCES;}
     
     const parsed = JSON.parse(stored) as Partial<UserPreferences>;
     return { ...DEFAULT_PREFERENCES, ...parsed };
@@ -60,7 +60,7 @@ export function getUserPreferences(): UserPreferences {
  * Save user preferences to localStorage
  */
 export function saveUserPreferences(preferences: UserPreferences): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined') {return;}
   
   try {
     localStorage.setItem(PREFERENCES_KEY, JSON.stringify(preferences));
@@ -88,7 +88,7 @@ export function updatePreference<K extends keyof UserPreferences>(
  * Apply preferences to the document
  */
 export function applyPreferences(preferences: UserPreferences): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined') {return;}
   
   const root = document.documentElement;
   

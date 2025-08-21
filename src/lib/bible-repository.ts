@@ -5,15 +5,13 @@
 
 import { promises as fs } from 'fs';
 import { join } from 'path';
-import { cache } from 'react';
 import { z } from 'zod';
 
 import { BibleBook, BookMeta, ApiResponse, Testament, Verse, SearchOptions, SearchResult } from '@/types/bible';
-import { ALL_BIBLE_BOOKS, BOOKS_BY_ID, BOOKS_BY_FILENAME } from '@/constants/bible';
+import { ALL_BIBLE_BOOKS, BOOKS_BY_ID } from '@/constants/bible';
 import { retryWithBackoff } from '@/utils';
 import { cacheManager, withCache } from '@/lib/cache';
 import { logger, performanceMonitor, AppError, ErrorCategory, ValidationError, DataNotFoundError } from '@/lib/errors';
-import { getConfig } from '@/config/app';
 
 // ===== VALIDATION SCHEMAS =====
 
@@ -365,9 +363,9 @@ class BibleDataRepository implements BibleRepository {
                 }
               }
             }
-            if (searchResults.length >= validatedOptions.limit) break;
+            if (searchResults.length >= validatedOptions.limit) {break;}
           }
-          if (searchResults.length >= validatedOptions.limit) break;
+          if (searchResults.length >= validatedOptions.limit) {break;}
         } catch (error) {
           logger.warn('Error searching book', { bookId: bookMeta.id, error: (error as Error).message });
           continue;
@@ -526,7 +524,7 @@ class BibleDataRepository implements BibleRepository {
                   totalVerses += verses.length;
                 }
               }
-            } catch (error) {
+            } catch (_error) {
               logger.warn('Error getting stats for book', { bookId: bookMeta.id });
             }
           }

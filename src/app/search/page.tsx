@@ -35,7 +35,7 @@ export default function SearchPage() {
 
   // Debounced search function
   const debouncedSearch = React.useMemo(
-    () => debounce(async (searchQuery: string) => {
+    () => debounce((searchQuery: string) => {
       if (!searchQuery.trim()) {
         setResults([]);
         return;
@@ -44,36 +44,38 @@ export default function SearchPage() {
       setLoading(true);
       setError(null);
 
-      try {
-        // Use API route for search
-        const params = new URLSearchParams({
-          q: searchQuery,
-          caseSensitive: filters.caseSensitive.toString(),
-          limit: '50',
-        });
-
-        if (filters.testament !== '') {
-          params.append('testament', filters.testament === Testament.OLD ? 'old' : 'new');
-        }
-
-        const response = await fetch(`/api/search?${params.toString()}`);
-        const searchResponse = await response.json();
-
-        if (searchResponse.success && searchResponse.data) {
-          setResults(searchResponse.data);
-          // Add to recent searches
-          setRecentSearches(prev => {
-            const updated = [searchQuery, ...prev.filter(s => s !== searchQuery)];
-            return updated.slice(0, 5); // Keep only 5 recent searches
+      (async () => {
+        try {
+          // Use API route for search
+          const params = new URLSearchParams({
+            q: searchQuery,
+            caseSensitive: filters.caseSensitive.toString(),
+            limit: '50',
           });
-        } else {
-          setError(searchResponse.error || 'Nisy olana tamin\'ny fikarohana');
+
+          if (filters.testament !== '') {
+            params.append('testament', filters.testament === Testament.OLD ? 'old' : 'new');
+          }
+
+          const response = await fetch(`/api/search?${params.toString()}`);
+          const searchResponse = await response.json();
+
+          if (searchResponse.success && searchResponse.data) {
+            setResults(searchResponse.data);
+            // Add to recent searches
+            setRecentSearches(prev => {
+              const updated = [searchQuery, ...prev.filter(s => s !== searchQuery)];
+              return updated.slice(0, 5); // Keep only 5 recent searches
+            });
+          } else {
+            setError(searchResponse.error || 'Nisy olana tamin\'ny fikarohana');
+          }
+        } catch {
+          setError('Nisy olana tamin\'ny fikarohana');
+        } finally {
+          setLoading(false);
         }
-      } catch {
-        setError('Nisy olana tamin\'ny fikarohana');
-      } finally {
-        setLoading(false);
-      }
+      })();
     }, 300),
     [filters]
   );

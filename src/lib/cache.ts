@@ -55,7 +55,7 @@ class CompressionUtils {
   public static decompress(compressed: string): unknown {
     try {
       return JSON.parse(decodeURIComponent(escape(atob(compressed))));
-    } catch (error) {
+    } catch (_error) {
       // Fallback to parsing as regular JSON
       return JSON.parse(compressed);
     }
@@ -177,7 +177,7 @@ class LRUCache<T> implements ICache<T> {
 
   public delete(key: string): boolean {
     const entry = this.cache.get(key);
-    if (!entry) return false;
+    if (!entry) {return false;}
 
     this.cache.delete(key);
     this.accessOrder.delete(key);
@@ -219,7 +219,7 @@ class LRUCache<T> implements ICache<T> {
   }
 
   private evictIfNeeded(): void {
-    if (this.cache.size < this.maxSize) return;
+    if (this.cache.size < this.maxSize) {return;}
 
     // Find least recently used item
     let lruKey: string | null = null;
@@ -335,7 +335,7 @@ class TTLCache<T> implements ICache<T> {
 
   public delete(key: string): boolean {
     const entry = this.cache.get(key);
-    if (!entry) return false;
+    if (!entry) {return false;}
 
     const timer = this.timers.get(key);
     if (timer) {

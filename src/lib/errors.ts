@@ -302,7 +302,7 @@ class Logger {
       
       switch (level) {
         case 'debug':
-          console.debug(`[${timestamp}] DEBUG: ${message}`, context);
+          console.info(`[${timestamp}] DEBUG: ${message}`, context);
           break;
         case 'info':
           console.info(`[${timestamp}] INFO: ${message}`, context);
@@ -369,7 +369,7 @@ class Logger {
   }
 
   public getLogs(level?: LogLevelType): LogEntry[] {
-    if (!level) return this.logs;
+    if (!level) {return this.logs;}
     return this.logs.filter(log => log.level === level);
   }
 

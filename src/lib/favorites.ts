@@ -29,7 +29,7 @@ const BOOKMARKS_KEY = 'ny-baiboly-bookmarks';
  * Get all favorite verses from localStorage
  */
 export function getFavoriteVerses(): FavoriteVerse[] {
-  if (typeof window === 'undefined') return [];
+  if (typeof window === 'undefined') {return [];}
   
   try {
     const stored = localStorage.getItem(FAVORITES_KEY);
@@ -44,7 +44,7 @@ export function getFavoriteVerses(): FavoriteVerse[] {
  * Add a verse to favorites
  */
 export function addToFavorites(verse: BibleVerse, note?: string): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined') {return;}
 
   try {
     const favorites = getFavoriteVerses();
@@ -73,7 +73,7 @@ export function addToFavorites(verse: BibleVerse, note?: string): void {
  * Remove a verse from favorites
  */
 export function removeFromFavorites(verseId: string): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined') {return;}
 
   try {
     const favorites = getFavoriteVerses();
@@ -88,7 +88,7 @@ export function removeFromFavorites(verseId: string): void {
  * Check if a verse is in favorites
  */
 export function isInFavorites(book: string, chapter: string, verse: string): boolean {
-  if (typeof window === 'undefined') return false;
+  if (typeof window === 'undefined') {return false;}
 
   const favorites = getFavoriteVerses();
   const id = `${book}-${chapter}-${verse}`;
@@ -99,7 +99,7 @@ export function isInFavorites(book: string, chapter: string, verse: string): boo
  * Update favorite verse note
  */
 export function updateFavoriteNote(verseId: string, note: string): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined') {return;}
 
   try {
     const favorites = getFavoriteVerses();
@@ -116,7 +116,7 @@ export function updateFavoriteNote(verseId: string, note: string): void {
  * Get all reading bookmarks from localStorage
  */
 export function getReadingBookmarks(): ReadingBookmark[] {
-  if (typeof window === 'undefined') return [];
+  if (typeof window === 'undefined') {return [];}
   
   try {
     const stored = localStorage.getItem(BOOKMARKS_KEY);
@@ -137,7 +137,7 @@ export function addReadingBookmark(
   verse?: string,
   title?: string
 ): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined') {return;}
 
   try {
     const bookmarks = getReadingBookmarks();
@@ -173,7 +173,7 @@ export function addReadingBookmark(
  * Remove a reading bookmark
  */
 export function removeReadingBookmark(bookmarkId: string): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined') {return;}
 
   try {
     const bookmarks = getReadingBookmarks();
@@ -188,7 +188,7 @@ export function removeReadingBookmark(bookmarkId: string): void {
  * Update bookmark last read time
  */
 export function updateBookmarkLastRead(bookmarkId: string): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined') {return;}
 
   try {
     const bookmarks = getReadingBookmarks();
@@ -207,7 +207,7 @@ export function updateBookmarkLastRead(bookmarkId: string): void {
  * Check if a location is bookmarked
  */
 export function isBookmarked(bookId: string, chapter: string, verse?: string): boolean {
-  if (typeof window === 'undefined') return false;
+  if (typeof window === 'undefined') {return false;}
 
   const bookmarks = getReadingBookmarks();
   const id = `${bookId}-${chapter}${verse ? '-' + verse : ''}`;
@@ -218,7 +218,7 @@ export function isBookmarked(bookId: string, chapter: string, verse?: string): b
  * Get reading progress for the current session
  */
 export function getReadingProgress(): Record<string, unknown> {
-  if (typeof window === 'undefined') return {};
+  if (typeof window === 'undefined') {return {};}
   
   try {
     const stored = localStorage.getItem('ny-baiboly-progress');
@@ -233,7 +233,7 @@ export function getReadingProgress(): Record<string, unknown> {
  * Update reading progress
  */
 export function updateReadingProgress(bookId: string, chapter: string, verse?: string): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined') {return;}
 
   try {
     const progress = getReadingProgress();
@@ -263,7 +263,7 @@ export function updateReadingProgress(bookId: string, chapter: string, verse?: s
  * Get last reading position
  */
 export function getLastReadingPosition(): { bookId: string; chapter: string; verse?: string } | null {
-  if (typeof window === 'undefined') return null;
+  if (typeof window === 'undefined') {return null;}
 
   try {
     const progress = getReadingProgress();

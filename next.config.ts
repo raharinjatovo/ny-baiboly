@@ -3,13 +3,17 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // Enable experimental features for better performance
   experimental: {
-    turbo: {
-      loaders: {
-        ".svg": ["@svgr/webpack"],
-      },
-    },
     optimizePackageImports: ["lucide-react", "@radix-ui/react-icons"],
-    typedRoutes: true,
+  },
+
+  // Move typedRoutes to top level (no longer experimental)
+  typedRoutes: true,
+
+  // New turbopack configuration (replaces experimental.turbo)
+  turbopack: {
+    rules: {
+      "*.svg": ["@svgr/webpack"],
+    },
   },
 
   // Security headers

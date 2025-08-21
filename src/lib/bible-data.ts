@@ -38,7 +38,7 @@ class DataCache<T> {
 
   get(key: string): T | null {
     const item = this.cache.get(key);
-    if (!item) return null;
+    if (!item) {return null;}
     
     // Check if cache is expired
     if (Date.now() - item.timestamp > CACHE_CONFIG.ttl) {
@@ -351,7 +351,7 @@ export async function searchBible(
     for (const bookMeta of booksToSearch) {
       try {
         const bookResponse = await getBibleBook(bookMeta.id);
-        if (!bookResponse.success || !bookResponse.data) continue;
+        if (!bookResponse.success || !bookResponse.data) {continue;}
 
         const book = bookResponse.data;
 
@@ -389,9 +389,9 @@ export async function searchBible(
               }
             }
           }
-          if (results.length >= limit) break;
+          if (results.length >= limit) {break;}
         }
-        if (results.length >= limit) break;
+        if (results.length >= limit) {break;}
       } catch (error) {
         console.error(`Error searching book ${bookMeta.id}:`, error);
         // Continue with other books
@@ -466,28 +466,28 @@ export async function getRandomVerses(
       
       // Load the book data
       const bookResponse = await getBibleBook(randomBook.id);
-      if (!bookResponse.success || !bookResponse.data) continue;
+      if (!bookResponse.success || !bookResponse.data) {continue;}
 
       const bookData = bookResponse.data;
 
       // Get all chapters
       const chapterNumbers = Object.keys(bookData.chapters);
-      if (chapterNumbers.length === 0) continue;
+      if (chapterNumbers.length === 0) {continue;}
 
       // Pick a random chapter
       const randomChapterNum = chapterNumbers[Math.floor(Math.random() * chapterNumbers.length)];
       const chapter = bookData.chapters[randomChapterNum];
-      if (!chapter) continue;
+      if (!chapter) {continue;}
 
       // Get all verses in the chapter
       const verseNumbers = Object.keys(chapter);
-      if (verseNumbers.length === 0) continue;
+      if (verseNumbers.length === 0) {continue;}
 
       // Pick a random verse
       const randomVerseNum = verseNumbers[Math.floor(Math.random() * verseNumbers.length)];
       const verseText = chapter[randomVerseNum];
       
-      if (!verseText || typeof verseText !== 'string') continue;
+      if (!verseText || typeof verseText !== 'string') {continue;}
 
       // Check if we already have this verse (avoid duplicates)
       const verseKey = `${randomBook.id}-${randomChapterNum}-${randomVerseNum}`;

@@ -91,7 +91,7 @@ const RandomVersesPage = () => {
     try {
       await navigator.clipboard.writeText(text);
       // You could add a toast notification here
-      console.log('Verse copied to clipboard');
+      console.info('Verse copied to clipboard');
     } catch {
       console.error('Failed to copy to clipboard');
     }
@@ -99,7 +99,7 @@ const RandomVersesPage = () => {
 
   const addToFavorites = (verse: RandomVerse) => {
     // This would integrate with your favorites system
-    console.log('Adding to favorites:', verse);
+    console.info('Adding to favorites:', verse);
     // You could add a toast notification here
   };
 

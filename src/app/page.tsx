@@ -134,7 +134,7 @@ export default function HomePage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg">
-              <Link href="/books/genesis">
+              <Link href="/books/genesis" as="/books/genesis">
                 Manomboka amin'ny Genesisy
               </Link>
             </Button>
@@ -173,7 +173,7 @@ function FeatureCard({ icon, title, description, href, linkText }: FeatureCardPr
       </CardHeader>
       <CardContent>
         <Button asChild variant="outline" className="w-full">
-          <Link href={href}>{linkText}</Link>
+          <Link href={href as "/books" | "/search" | "/favorites"}>{linkText}</Link>
         </Button>
       </CardContent>
     </Card>

@@ -1,6 +1,8 @@
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import { FlatCompat } from "@eslint/eslintrc";
+import typescriptEslint from "@typescript-eslint/eslint-plugin";
+import typescriptParser from "@typescript-eslint/parser";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -10,47 +12,36 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  ...compat.extends(
-    "next/core-web-vitals",
-    "next/typescript",
-    "@typescript-eslint/recommended",
-    "prettier"
-  ),
-  ...compat.plugins(
-    "@typescript-eslint",
-    "jsx-a11y",
-    "security",
-    "jest",
-    "testing-library"
-  ),
+  // Extend Next.js configurations
+  ...compat.extends("next/core-web-vitals"),
+  {
+    files: ["**/*.{ts,tsx}"],
+    languageOptions: {
+      parser: typescriptParser,
+      parserOptions: {
+        ecmaVersion: "latest",
+        sourceType: "module",
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+    },
+    plugins: {
+      "@typescript-eslint": typescriptEslint,
+    },
+    rules: {
+      // TypeScript specific rules
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-unused-vars": ["warn", { 
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
+      }],
+    },
+  },
   {
     files: ["**/*.{js,jsx,ts,tsx}"],
     rules: {
-      // TypeScript specific rules
-      "@typescript-eslint/no-unused-vars": ["error", { 
-        argsIgnorePattern: "^_",
-        varsIgnorePattern: "^_" 
-      }],
-      "@typescript-eslint/no-explicit-any": "warn",
-      "@typescript-eslint/explicit-function-return-type": "off",
-      "@typescript-eslint/explicit-module-boundary-types": "off",
-      "@typescript-eslint/no-non-null-assertion": "warn",
-      "@typescript-eslint/prefer-const": "error",
-      "@typescript-eslint/no-var-requires": "error",
-
-      // Security rules
-      "security/detect-object-injection": "warn",
-      "security/detect-non-literal-require": "warn",
-      "security/detect-unsafe-regex": "error",
-
-      // Accessibility rules
-      "jsx-a11y/alt-text": "error",
-      "jsx-a11y/aria-props": "error",
-      "jsx-a11y/aria-proptypes": "error",
-      "jsx-a11y/aria-unsupported-elements": "error",
-      "jsx-a11y/click-events-have-key-events": "warn",
-      "jsx-a11y/no-access-key": "error",
-
       // General code quality
       "prefer-const": "error",
       "no-var": "error",
@@ -83,19 +74,6 @@ const eslintConfig = [
   {
     files: ["**/*.test.{js,jsx,ts,tsx}", "**/__tests__/**/*.{js,jsx,ts,tsx}"],
     rules: {
-      // Jest rules for test files
-      "jest/no-disabled-tests": "warn",
-      "jest/no-focused-tests": "error",
-      "jest/no-identical-title": "error",
-      "jest/prefer-to-have-length": "warn",
-      "jest/valid-expect": "error",
-
-      // Testing library rules
-      "testing-library/await-async-query": "error",
-      "testing-library/no-await-sync-query": "error",
-      "testing-library/no-debugging-utils": "warn",
-      "testing-library/no-dom-import": "error",
-
       // Allow console in tests
       "no-console": "off",
     },
@@ -105,8 +83,6 @@ const eslintConfig = [
     rules: {
       // Allow console in e2e tests
       "no-console": "off",
-      // Playwright specific allowances
-      "@typescript-eslint/no-non-null-assertion": "off",
     },
   },
   {

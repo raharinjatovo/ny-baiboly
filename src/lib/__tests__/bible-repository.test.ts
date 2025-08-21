@@ -39,7 +39,7 @@ interface BibleRepository {
     };
     error?: string;
   }>;
-  searchBible: (query: string, options?: any) => Promise<{
+  searchBible: (query: string, options?: Record<string, unknown>) => Promise<{
     success: boolean;
     data: null | {
       verses: Array<{
@@ -51,7 +51,7 @@ interface BibleRepository {
       total: number;
       hasMore: boolean;
       query: string;
-      searchOptions: any;
+      searchOptions: Record<string, unknown>;
       executionTime: number;
     };
     error?: string;
@@ -143,7 +143,7 @@ const mockBibleRepository: BibleRepository = {
       data: chapter,
     };
   }),
-  searchBible: jest.fn(async (query: string, options: any = {}) => {
+  searchBible: jest.fn(async (query: string, options: Record<string, unknown> = {}) => {
     if (!query || query.length < 2) {
       return {
         success: false,
@@ -165,7 +165,7 @@ const mockBibleRepository: BibleRepository = {
       ? searchResults.filter(v => v.text.includes(query))
       : searchResults.filter(v => v.text.toLowerCase().includes(query.toLowerCase()));
       
-    const limitedResults = options.limit 
+    const limitedResults = options.limit && typeof options.limit === 'number'
       ? filteredResults.slice(0, options.limit)
       : filteredResults;
     
@@ -215,7 +215,7 @@ const mockConsole = {
   debug: jest.fn(),
 };
 
-global.console = mockConsole as any;
+global.console = mockConsole as unknown as Console;
 
 describe('BibleRepository', () => {
   beforeEach(() => {

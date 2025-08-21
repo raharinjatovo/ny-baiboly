@@ -17,7 +17,7 @@ declare global {
       toBeChecked(): R;
       toHaveValue(value: string | number | string[]): R;
       toHaveDisplayValue(value: string | RegExp | string[] | RegExp[]): R;
-      toHaveStyle(css: string | Record<string, any>): R;
+      toHaveStyle(css: string | Record<string, string | number>): R;
       toHaveTextContent(text: string | RegExp): R;
       toContainElement(element: HTMLElement | null): R;
       toHaveAccessibleName(name?: string | RegExp): R;
@@ -28,7 +28,7 @@ declare global {
       toBeValid(): R;
       toHaveErrorMessage(message?: string | RegExp): R;
       toHaveFocus(): R;
-      toHaveFormValues(values: Record<string, any>): R;
+      toHaveFormValues(values: Record<string, string | string[] | boolean>): R;
       toBePartiallyChecked(): R;
       toHaveSelectedOptions(options: HTMLElement[] | HTMLElement | string[] | string): R;
     }

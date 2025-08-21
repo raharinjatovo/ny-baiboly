@@ -42,7 +42,7 @@ export default function SettingsPage() {
     key: K,
     value: UserPreferences[K]
   ) => {
-    if (!preferences) return;
+    if (!preferences) {return;}
     
     const updated = { ...preferences, [key]: value };
     setPreferences(updated);
@@ -73,7 +73,7 @@ export default function SettingsPage() {
     input.accept = '.json';
     input.onchange = (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
-      if (!file) return;
+      if (!file) {return;}
 
       setImporting(true);
       const reader = new FileReader();

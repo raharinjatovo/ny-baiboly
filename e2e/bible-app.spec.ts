@@ -235,7 +235,7 @@ test.describe('Bible Application', () => {
       await page.goto('/random');
       
       // Get initial verse text
-      const initialVerse = await page.locator('[data-testid="random-verse"]').textContent();
+      const _initialVerse = await page.locator('[data-testid="random-verse"]').textContent();
       
       // Click generate new verse button
       const newVerseButton = page.getByRole('button', { name: /vaovao/i });

@@ -132,7 +132,7 @@ class BibleDataRepository implements BibleRepository {
     // URL encode the testament directory to handle spaces properly
     const encodedTestamentDir = encodeURIComponent(testamentDir);
     
-    const url = `${baseUrl}/data/baiboly-json/${encodedTestamentDir}/${bookMeta.fileName}.json`;
+    const url = `https://raw.githubusercontent.com/RaveloMevaSoavina/baiboly-json/refs/heads/master/${encodedTestamentDir}/${bookMeta.fileName}.json`;
     console.log(url)
     return url;
   }

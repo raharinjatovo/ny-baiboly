@@ -3,8 +3,6 @@
  * Features: Caching, validation, error handling, performance monitoring
  */
 
-import { promises as fs } from 'fs';
-import { join } from 'path';
 import { z } from 'zod';
 
 import { BibleBook, BookMeta, ApiResponse, Testament, Verse, SearchOptions, SearchResult } from '@/types/bible';
@@ -74,20 +72,26 @@ class BibleDataRepository implements BibleRepository {
   }
 
   /**
-   * Safely read and parse JSON file with validation
+   * Safely read and parse JSON file from HTTP URL with validation
    */
-  private async readJsonFile(filePath: string): Promise<Record<string, Record<string, string>>> {
+  private async readJsonFile(url: string): Promise<Record<string, Record<string, string>>> {
     const timerId = performanceMonitor.startTimer('file_read');
     
     try {
-      const content = await fs.readFile(filePath, 'utf-8');
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const content = await response.text();
       const data = JSON.parse(content);
       
       // Validate the data structure
       const validatedData = BookDataSchema.parse(data);
       
       performanceMonitor.endTimer(timerId, { 
-        metadata: { filePath }, 
+        metadata: { url }, 
         success: true,
         size: content.length 
       });
@@ -95,36 +99,42 @@ class BibleDataRepository implements BibleRepository {
       return validatedData;
     } catch (error) {
       performanceMonitor.endTimer(timerId, { 
-        metadata: { filePath }, 
+        metadata: { url }, 
         success: false,
         error: (error as Error).message 
       });
       
       if (error instanceof z.ZodError) {
         throw new ValidationError(
-          `Invalid Bible data format in ${filePath}: ${error.errors.map(e => e.message).join(', ')}`,
-          { metadata: { filePath } }
+          `Invalid Bible data format from ${url}: ${error.errors.map(e => e.message).join(', ')}`,
+          { metadata: { url } }
         );
       }
       
-      throw new AppError(`Failed to read Bible data from ${filePath}`, {
-        code: 'FILE_READ_ERROR',
+      throw new AppError(`Failed to read Bible data from ${url}`, {
+        code: 'HTTP_READ_ERROR',
         category: ErrorCategory.SYSTEM,
-        context: { metadata: { filePath } },
+        context: { metadata: { url } },
         cause: error as Error,
       });
     }
   }
 
   /**
-   * Get the full file path for a book
+   * Get the HTTP URL for a book's JSON file
    */
-  private getBookFilePath(bookMeta: BookMeta): string {
-    // Use environment variable for data path, fallback to public/data
-    const dataPath = process.env.BIBLE_DATA_PATH || 'public/data';
-    const dataDir = join(process.cwd(), dataPath, 'baiboly-json');
+  private getBookFileUrl(bookMeta: BookMeta): string {
+    // Use localhost for development/production - files are served from public folder
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+    
     const testamentDir = bookMeta.testament === Testament.OLD ? 'Testameta taloha' : 'Testameta vaovao';
-    return join(dataDir, testamentDir, `${bookMeta.fileName}.json`);
+    
+    // URL encode the testament directory to handle spaces properly
+    const encodedTestamentDir = encodeURIComponent(testamentDir);
+    
+    const url = `${baseUrl}/data/baiboly-json/${encodedTestamentDir}/${bookMeta.fileName}.json`;
+    console.log(url)
+    return url;
   }
 
   /**
@@ -174,10 +184,10 @@ class BibleDataRepository implements BibleRepository {
         throw new DataNotFoundError('Book', bookId);
       }
 
-      // Read book data with retry logic
-      const filePath = this.getBookFilePath(bookMeta);
+      // Read book data with retry logic using HTTP URL
+      const fileUrl = this.getBookFileUrl(bookMeta);
       const bookData = await retryWithBackoff(
-        () => this.readJsonFile(filePath),
+        () => this.readJsonFile(fileUrl),
         3, // maxRetries
         100 // baseDelay
       );

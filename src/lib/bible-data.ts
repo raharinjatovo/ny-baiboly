@@ -3,8 +3,6 @@
  * Implements clean architecture principles with proper error handling and caching
  */
 
-import { promises as fs } from 'fs';
-import { join } from 'path';
 import { cache } from 'react';
 import { BibleBook, BookMeta, ApiResponse, Testament } from '@/types/bible';
 import { ALL_BIBLE_BOOKS, BOOKS_BY_ID, BOOKS_BY_FILENAME } from '@/constants/bible';
@@ -63,30 +61,43 @@ const bookCache = new DataCache<BibleBook>();
 const chapterCache = new DataCache<Record<string, string>>();
 
 /**
- * Safely read and parse JSON file
- * @param filePath - Path to JSON file
+ * Safely read and parse JSON file from HTTP URL
+ * @param url - URL to JSON file
  * @returns Parsed JSON data or throws error
  */
-async function readJsonFile(filePath: string): Promise<Record<string, Record<string, string>>> {
+async function readJsonFile(url: string): Promise<Record<string, Record<string, string>>> {
   try {
-    const fileContent = await fs.readFile(filePath, 'utf-8');
+    const response = await fetch(url.replace('api',''));
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    
+    const fileContent = await response.text();
     return JSON.parse(fileContent);
   } catch (error) {
-    console.error(`Error reading file ${filePath}:`, error);
-    throw new Error(`Failed to read file: ${filePath}`);
+    console.error(`Error reading file ${url}:`, error);
+    throw new Error(`Failed to read file: ${url}`);
   }
 }
 
 /**
- * Get the full file path for a book
+ * Get the HTTP URL for a book's JSON file
  * @param bookMeta - Book metadata
- * @returns Full file path
+ * @returns HTTP URL to the JSON file
  */
-function getBookFilePath(bookMeta: BookMeta): string {
-  const basePath = process.cwd();
+function getBookFileUrl(bookMeta: BookMeta): string {
+  // Use localhost for development/production - files are served from public folder
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
   
-  return join(basePath, 'data', 'baiboly-json', 
-    bookMeta.testament, `${bookMeta.fileName}.json`);
+  const testamentDir = bookMeta.testament === Testament.OLD ? 'Testameta taloha' : 'Testameta vaovao';
+  
+  // URL encode the testament directory to handle spaces properly
+  const encodedTestamentDir = encodeURIComponent(testamentDir);
+  
+  const url = `${baseUrl}/data/baiboly-json/${encodedTestamentDir}/${bookMeta.fileName}.json`;
+  
+  return url;
 }
 
 /**
@@ -147,8 +158,8 @@ export const getBibleBook = cache(async (bookId: string): Promise<ApiResponse<Bi
     }
 
     // Read book data with retry logic
-    const filePath = getBookFilePath(bookMeta);
-    const bookData = await retryWithBackoff(() => readJsonFile(filePath));
+    const fileUrl = getBookFileUrl(bookMeta);
+    const bookData = await retryWithBackoff(() => readJsonFile(fileUrl));
 
     // Construct complete book object
     const bibleBook: BibleBook = {

@@ -140,9 +140,9 @@ export const APP_CONFIG = {
  * File paths for data
  */
 export const DATA_PATHS = {
-  base: '/public/data/baiboly-json',
-  oldTestament: '/public/data/baiboly-json/Testameta taloha',
-  newTestament: '/public/data/baiboly-json/Testameta vaovao',
+  base: '/public/baiboly-json',
+  oldTestament: '/public/baiboly-json/Testameta taloha',
+  newTestament: '/public/baiboly-json/Testameta vaovao',
 } as const;
 
 /**

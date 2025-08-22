@@ -8,6 +8,7 @@ import { Layout } from "@/components/layout";
 import { TestamentSection } from "@/components/bible/book-card";
 import { OLD_TESTAMENT_BOOKS, NEW_TESTAMENT_BOOKS } from "@/constants/bible";
 import { Testament } from "@/types/bible";
+import PageLayout from "@/components/layout/page-layout";
 
 export const metadata: Metadata = {
   title: "Ny Boky rehetra - Ny Baiboly",
@@ -19,33 +20,30 @@ export const metadata: Metadata = {
 };
 
 export default function BooksPage() {
-  return (
-    <Layout>
-      <div className="space-y-8">
-        {/* Page Header */}
-        <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold text-foreground">
-            Ny Boky rehetra
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Safidio ny boky tianao ho vakina. Ny Baiboly dia ahitana boky 66 
-            izay mizara ho Testameta Taloha sy Testameta Vaovao.
-          </p>
-        </div>
+  const breadcrumbs = [
+    { label: 'Boky', current: true }
+  ];
 
+  return (
+    <PageLayout
+      title="Ny Boky rehetra"
+      description="Safidio ny boky tianao ho vakina. Ny Baiboly dia ahitana boky 66 izay mizara ho Testameta Taloha sy Testameta Vaovao."
+      breadcrumbs={breadcrumbs}
+    >
+      <div className="p-6 space-y-8">
         {/* Quick Stats */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-md mx-auto">
-          <div className="text-center p-4 bg-accent rounded-lg">
-            <div className="text-2xl font-bold text-foreground">66</div>
-            <div className="text-sm text-muted-foreground">Boky</div>
+          <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+            <div className="text-2xl font-bold text-blue-700 dark:text-blue-300">66</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">Boky</div>
           </div>
-          <div className="text-center p-4 bg-accent rounded-lg">
-            <div className="text-2xl font-bold text-foreground">39</div>
-            <div className="text-sm text-muted-foreground">TT</div>
+          <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+            <div className="text-2xl font-bold text-green-700 dark:text-green-300">39</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">TT</div>
           </div>
-          <div className="text-center p-4 bg-accent rounded-lg">
-            <div className="text-2xl font-bold text-foreground">27</div>
-            <div className="text-sm text-muted-foreground">TV</div>
+          <div className="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+            <div className="text-2xl font-bold text-purple-700 dark:text-purple-300">27</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">TV</div>
           </div>
         </div>
 
@@ -61,6 +59,6 @@ export default function BooksPage() {
           books={NEW_TESTAMENT_BOOKS}
         />
       </div>
-    </Layout>
+    </PageLayout>
   );
 }

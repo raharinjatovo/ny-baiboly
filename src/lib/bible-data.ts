@@ -67,7 +67,7 @@ const chapterCache = new DataCache<Record<string, string>>();
  */
 async function readJsonFile(url: string): Promise<Record<string, Record<string, string>>> {
   try {
-    const response = await fetch(url.replace('api',''));
+    const response = await fetch(url);
     
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);

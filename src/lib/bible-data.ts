@@ -95,7 +95,7 @@ function getBookFileUrl(bookMeta: BookMeta): string {
   // URL encode the testament directory to handle spaces properly
   const encodedTestamentDir = encodeURIComponent(testamentDir);
   
-  const url = `${baseUrl}/baiboly-json/${encodedTestamentDir}/${bookMeta.fileName}.json`;
+  const url = `${baseUrl}/${encodedTestamentDir}/${bookMeta.fileName}.json`;
   
   return url;
 }

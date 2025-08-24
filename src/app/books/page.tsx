@@ -4,7 +4,6 @@
  */
 
 import { Metadata } from "next";
-import { Layout } from "@/components/layout";
 import { TestamentSection } from "@/components/bible/book-card";
 import { OLD_TESTAMENT_BOOKS, NEW_TESTAMENT_BOOKS } from "@/constants/bible";
 import { Testament } from "@/types/bible";

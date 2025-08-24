@@ -6,70 +6,67 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { RefreshCw, Book, Heart, Share2 } from 'lucide-react';
-import { BookMeta } from '@/types/bible';
 
-interface RandomVerse {
-  book: BookMeta;
-  chapter: string;
-  verse: string;
-  text: string;
-}
-
-interface RandomVersesResponse {
-  success: boolean;
-  data: RandomVerse[];
-  error?: string;
+interface RandomVerseApiResponse {
+  translation: {
+    identifier: string;
+    name: string;
+    language: string;
+    language_code: string;
+    license: string;
+  };
+  random_verse: {
+    book_id: string;
+    book: string;
+    chapter: number;
+    verse: number;
+    text: string;
+  };
 }
 
 const RandomVersesPage = () => {
-  const [verses, setVerses] = useState<RandomVerse[]>([]);
+  const [verse, setVerse] = useState<RandomVerseApiResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [count, setCount] = useState(1);
-  const [testament, setTestament] = useState<'all' | 'old' | 'new'>('all');
 
-  const fetchRandomVerses = useCallback(async () => {
+  const fetchRandomVerse = useCallback(async () => {
     setLoading(true);
     setError(null);
     
     try {
-      const params = new URLSearchParams({
-        count: count.toString(),
-        ...(testament !== 'all' && { testament }),
-      });
-
-      const response = await fetch(`/api/random?${params}`);
-      const result: RandomVersesResponse = await response.json();
+      const response = await fetch('/api/random-verse');
       
-      if (result.success && result.data) {
-        setVerses(result.data);
-      } else {
-        setError(result.error || 'Failed to fetch random verses');
-        setVerses([]);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
+      
+      const result: RandomVerseApiResponse = await response.json();
+      setVerse(result);
     } catch (error) {
-      setError('Network error occurred');
-      setVerses([]);
-      console.error('Error fetching random verses:', error);
+      setError(error instanceof Error ? error.message : 'Network error occurred');
+      setVerse(null);
+      console.error('Error fetching random verse:', error);
     } finally {
       setLoading(false);
     }
-  }, [count, testament]);
+  }, []);
 
   // Fetch initial random verse on component mount
   useEffect(() => {
-    fetchRandomVerses();
-  }, [fetchRandomVerses]);
+    fetchRandomVerse();
+  }, [fetchRandomVerse]);
 
   const handleRefresh = () => {
-    fetchRandomVerses();
+    fetchRandomVerse();
   };
 
-  const handleShare = async (verse: RandomVerse) => {
-    const shareText = `"${verse.text}" - ${verse.book.name} ${verse.chapter}:${verse.verse}`;
+  const handleShare = async () => {
+    if (!verse) {return;}
+    
+    const shareText = `"${verse.random_verse.text}" - ${verse.random_verse.book} ${verse.random_verse.chapter}:${verse.random_verse.verse}`;
     
     if (navigator.share) {
       try {
@@ -97,9 +94,10 @@ const RandomVersesPage = () => {
     }
   };
 
-  const addToFavorites = (verse: RandomVerse) => {
+  const addToFavorites = () => {
+    if (!verse) {return;}
     // This would integrate with your favorites system
-    console.info('Adding to favorites:', verse);
+    console.info('Adding to favorites:', verse.random_verse);
     // You could add a toast notification here
   };
 
@@ -114,58 +112,6 @@ const RandomVersesPage = () => {
           Mahazoa verset tsy ampoizina avy amin&apos;ny Baiboly Malagasy
         </p>
       </div>
-
-      {/* Controls */}
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle>Safidy</CardTitle>
-          <CardDescription>
-            Safidio ny isan&apos;ny verset sy ny Testameta
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col sm:flex-row gap-4 items-end">
-            <div className="flex-1">
-              <label className="block text-sm font-medium mb-2">
-                Isan&apos;ny verset
-              </label>
-              <select
-                value={count}
-                onChange={(e) => setCount(parseInt(e.target.value))}
-                className="w-full px-3 py-2 border border-input rounded-md bg-background"
-              >
-                {[1, 2, 3, 4, 5].map(n => (
-                  <option key={n} value={n}>{n}</option>
-                ))}
-              </select>
-            </div>
-            
-            <div className="flex-1">
-              <label className="block text-sm font-medium mb-2">
-                Testameta
-              </label>
-              <select
-                value={testament}
-                onChange={(e) => setTestament(e.target.value as 'all' | 'old' | 'new')}
-                className="w-full px-3 py-2 border border-input rounded-md bg-background"
-              >
-                <option value="all">Izy rehetra</option>
-                <option value="old">Testameta taloha</option>
-                <option value="new">Testameta vaovao</option>
-              </select>
-            </div>
-            
-            <Button
-              onClick={handleRefresh}
-              disabled={loading}
-              className="flex items-center gap-2"
-            >
-              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-              Havaozina
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Error State */}
       {error && (
@@ -189,59 +135,63 @@ const RandomVersesPage = () => {
         </div>
       )}
 
-      {/* Verses Display */}
-      {!loading && verses.length > 0 && (
-        <div className="space-y-6">
-          {verses.map((verse, index) => (
-            <Card key={`${verse.book.id}-${verse.chapter}-${verse.verse}-${index}`} className="overflow-hidden">
-              <CardContent className="pt-6">
-                <div className="space-y-4">
-                  {/* Verse Text */}
-                  <blockquote className="text-lg leading-relaxed border-l-4 border-primary pl-4 italic">
-                    &ldquo;{verse.text}&rdquo;
-                  </blockquote>
-                  
-                  {/* Verse Reference */}
-                  <div className="flex items-center justify-between">
-                    <div className="text-sm text-muted-foreground">
-                      <span className="font-medium">{verse.book.name}</span>
-                      <span className="mx-1">•</span>
-                      <span>Toko {verse.chapter}:{verse.verse}</span>
-                      <span className="mx-1">•</span>
-                      <span>{verse.book.testament}</span>
-                    </div>
-                    
-                    {/* Action Buttons */}
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => addToFavorites(verse)}
-                        className="h-8 w-8 p-0"
-                        title="Atao ankafiziko"
-                      >
-                        <Heart className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleShare(verse)}
-                        className="h-8 w-8 p-0"
-                        title="Zarao"
-                      >
-                        <Share2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
+      {/* Verse Display */}
+      {!loading && verse && (
+        <Card className="overflow-hidden mb-8">
+          <CardContent className="pt-6">
+            <div className="space-y-4">
+              {/* Verse Text */}
+              <blockquote className="text-lg leading-relaxed border-l-4 border-primary pl-4 italic">
+                &ldquo;{verse.random_verse.text}&rdquo;
+              </blockquote>
+              
+              {/* Verse Reference */}
+              <div className="flex items-center justify-between">
+                <div className="text-sm text-muted-foreground">
+                  <span className="font-medium">{verse.random_verse.book}</span>
+                  <span className="mx-1">•</span>
+                  <span>Toko {verse.random_verse.chapter}:{verse.random_verse.verse}</span>
+                  <span className="mx-1">•</span>
+                  <span>{verse.translation.name}</span>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                
+                {/* Action Buttons */}
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={addToFavorites}
+                    className="h-8 w-8 p-0"
+                    title="Atao ankafiziko"
+                  >
+                    <Heart className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleShare}
+                    className="h-8 w-8 p-0"
+                    title="Zarao"
+                  >
+                    <Share2 className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    onClick={handleRefresh}
+                    disabled={loading}
+                    className="flex items-center gap-2 ml-2"
+                  >
+                    <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                    Havaozina
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       )}
 
       {/* Empty State */}
-      {!loading && !error && verses.length === 0 && (
+      {!loading && !error && !verse && (
         <Card className="text-center py-12">
           <CardContent>
             <Book className="h-12 w-12 mx-auto text-muted-foreground mb-4" />

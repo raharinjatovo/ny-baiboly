@@ -120,6 +120,23 @@ const Footer: React.FC = () => {
             <div className="text-gray-500 dark:text-gray-400 text-sm">
               © {currentYear} Ny Baiboly. Avela ho an'ny rehetra.
             </div>
+            
+            {/* Developer Section */}
+            <div className="flex flex-col sm:flex-row items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+              <span>Noforonin'i</span>
+              <a
+                href="https://github.com/raharinjatovo"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200"
+                title="Jereo ny profile GitHub an'i raharinjatovo"
+              >
+                <Github className="w-4 h-4" />
+                <span className="font-medium">raharinjatovo</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
+            
             <div className="flex items-center gap-4">
               <Link
                 href="/feedback"
@@ -129,7 +146,7 @@ const Footer: React.FC = () => {
                 <Mail className="w-5 h-5" />
               </Link>
               <a
-                href="https://github.com/RaveloMevaSoavina/baiboly-json"
+                href="https://github.com/raharinjatovo/ny-baiboly"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"

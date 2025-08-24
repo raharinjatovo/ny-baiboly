@@ -13,8 +13,16 @@ import { logger, performanceMonitor, AppError, ErrorCategory, ValidationError, D
 
 // ===== VALIDATION SCHEMAS =====
 
+const MetaSchema = z.object({
+  name: z.string(),
+  order: z.number(),
+  chapter_number: z.number(),
+});
+
 const ChapterDataSchema = z.record(z.string(), z.record(z.string(), z.string()));
-const BookDataSchema = z.record(z.string(), z.record(z.string(), z.string()));
+const BookDataSchema = z.object({
+  meta: MetaSchema,
+}).catchall(z.record(z.string(), z.string())); // Allow additional chapter keys with verse records
 
 const SearchOptionsValidationSchema = z.object({
   testament: z.enum(['old', 'new']).optional(),
@@ -87,8 +95,35 @@ class BibleDataRepository implements BibleRepository {
       const content = await response.text();
       const data = JSON.parse(content);
       
-      // Validate the data structure
-      const validatedData = BookDataSchema.parse(data);
+      console.info('📋 DEBUG: Raw data meta:', data.meta);
+      console.info('📋 DEBUG: Transforming data...');
+      
+      // Transform numeric keys to strings for consistency, preserve meta as-is
+      const transformedData: Record<string, Record<string, string> | { name: string; order: number; chapter_number: number }> = {
+        meta: data.meta  // Keep meta object as-is with proper types
+      };
+      
+      for (const [chapterKey, chapterData] of Object.entries(data)) {
+        if (chapterKey === 'meta') {
+          continue; // Already handled above
+        }
+        
+        if (typeof chapterData === 'object' && chapterData !== null && !Array.isArray(chapterData)) {
+          const chapterVerses: Record<string, string> = {};
+          for (const [verseKey, verseText] of Object.entries(chapterData as Record<string, string>)) {
+            chapterVerses[String(verseKey)] = String(verseText);
+          }
+          transformedData[String(chapterKey)] = chapterVerses;
+        }
+      }
+      
+      console.info('📋 DEBUG: Transformed data meta:', transformedData.meta);
+      console.info('📋 DEBUG: Transformed data chapters:', Object.keys(transformedData).filter(k => k !== 'meta'));
+      
+      // Validate the transformed data structure
+      console.info('📋 DEBUG: Starting validation...');
+      const validatedData = BookDataSchema.parse(transformedData);
+      console.info('📋 DEBUG: Validation successful!');
       
       performanceMonitor.endTimer(timerId, { 
         metadata: { url }, 
@@ -105,9 +140,10 @@ class BibleDataRepository implements BibleRepository {
       });
       
       if (error instanceof z.ZodError) {
+        console.info('📋 DEBUG: Zod validation error details:', JSON.stringify(error.errors, null, 2));
         throw new ValidationError(
-          `Invalid Bible data format from ${url}: ${error.errors.map(e => e.message).join(', ')}`,
-          { metadata: { url } }
+          `Invalid Bible data format from ${url}: ${error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ')}`,
+          { metadata: { url, zodErrors: error.errors } }
         );
       }
       
@@ -124,16 +160,14 @@ class BibleDataRepository implements BibleRepository {
    * Get the HTTP URL for a book's JSON file
    */
   private getBookFileUrl(bookMeta: BookMeta): string {
-    // Use localhost for development/production - files are served from public folder
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-    
+    // Use GitHub raw URL for data access
     const testamentDir = bookMeta.testament === Testament.OLD ? 'Testameta taloha' : 'Testameta vaovao';
     
     // URL encode the testament directory to handle spaces properly
     const encodedTestamentDir = encodeURIComponent(testamentDir);
     
     const url = `https://raw.githubusercontent.com/RaveloMevaSoavina/baiboly-json/refs/heads/master/${encodedTestamentDir}/${bookMeta.fileName}.json`;
-    console.log(url)
+    console.info(url)
     return url;
   }
 
@@ -212,7 +246,7 @@ class BibleDataRepository implements BibleRepository {
       performanceMonitor.endTimer(timerId, { bookId, success: false });
       
       if (error instanceof AppError) {
-        logger.error('Failed to load book', error, { bookId });
+        // logger.error('Failed to load book', error, { bookId });
         return {
           data: null,
           success: false,

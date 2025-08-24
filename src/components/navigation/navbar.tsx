@@ -18,11 +18,18 @@ import {
   BookOpen
 } from 'lucide-react';
 
+interface SubMenuItem {
+  href: string;
+  label: string;
+  description?: string;
+}
+
 interface NavItem {
   href: string;
   label: string;
   icon: React.ReactNode;
   description?: string;
+  submenu?: SubMenuItem[];
 }
 
 const navigationItems: NavItem[] = [
@@ -40,9 +47,15 @@ const navigationItems: NavItem[] = [
   },
   {
     href: '/search',
-    label: 'Fikarohana',
+    label: 'Fikarohana teny',
     icon: <Search className="w-5 h-5" />,
-    description: 'Hitady andinin-tsoratra'
+    description: 'Hitady andinin-tsoratra amin\'ny teny'
+  },
+  {
+    href: '/search/reference',
+    label: 'Fikarohana référence',
+    icon: <BookOpen className="w-5 h-5" />,
+    description: 'Hitady andinin-tsoratra amin\'ny boky sy toko'
   },
   {
     href: '/random',
@@ -135,16 +148,23 @@ const Navbar: React.FC = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-1">
-            {navigationItems.slice(0, 4).map((item) => (
+            {navigationItems.slice(0, 3).map((item) => (
               <NavLink key={item.href} item={item} />
             ))}
           </div>
 
           {/* Desktop Secondary Navigation */}
           <div className="hidden lg:flex items-center gap-1">
-            {navigationItems.slice(4).map((item) => (
+            {navigationItems.slice(3).map((item) => (
               <NavLink key={item.href} item={item} />
             ))}
+            {/* Add API Docs to main navigation */}
+            <NavLink key="/api-docs" item={{
+              href: '/api-docs',
+              label: 'API',
+              icon: <BookOpen className="w-5 h-5" />,
+              description: 'Tahirin-kevitra momba ny API'
+            }} />
           </div>
 
           {/* Mobile menu button */}

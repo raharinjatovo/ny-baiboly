@@ -21,7 +21,7 @@ const ApiDocumentationPage = () => {
         <CardHeader>
           <CardTitle>Overview</CardTitle>
           <CardDescription>
-            The Bible Search API provides powerful search capabilities across the entire Malagasy Bible
+            The Bible API provides powerful search, reference lookup, and random verse capabilities for the Malagasy Bible
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -32,13 +32,25 @@ const ApiDocumentationPage = () => {
                 <code className="bg-muted px-3 py-1 rounded text-sm mr-2">
                   /api/search
                 </code>
-                <span className="text-sm text-muted-foreground">Search Bible verses</span>
+                <span className="text-sm text-muted-foreground">Search Bible verses by text content</span>
+              </div>
+              <div>
+                <code className="bg-muted px-3 py-1 rounded text-sm mr-2">
+                  /api/search-reference
+                </code>
+                <span className="text-sm text-muted-foreground">Get specific verses by reference (book, chapter, verses)</span>
+              </div>
+              <div>
+                <code className="bg-muted px-3 py-1 rounded text-sm mr-2">
+                  /api/random-verse
+                </code>
+                <span className="text-sm text-muted-foreground">Get random Bible verses (bible-api.com compatible)</span>
               </div>
               <div>
                 <code className="bg-muted px-3 py-1 rounded text-sm mr-2">
                   /api/random
                 </code>
-                <span className="text-sm text-muted-foreground">Get random Bible verses</span>
+                <span className="text-sm text-muted-foreground">Get random Bible verses with filtering options</span>
               </div>
             </div>
           </div>
@@ -346,6 +358,211 @@ const ApiDocumentationPage = () => {
         </CardContent>
       </Card>
 
+      {/* Reference Search API */}
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-orange-100 text-orange-800">POST</span>
+            Bible Reference Search
+          </CardTitle>
+          <CardDescription>
+            Get specific verses by book, chapter, and verse numbers with combined output
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div>
+            <h3 className="text-lg font-semibold mb-3">Endpoint</h3>
+            <code className="bg-muted px-3 py-2 rounded block text-sm">
+              POST /api/search-reference
+            </code>
+          </div>
+
+          <div>
+            <h3 className="text-lg font-semibold mb-3">Request Body Schema</h3>
+            <pre className="bg-muted p-4 rounded overflow-x-auto text-sm">
+{`{
+  "book": "string (required)",
+  "chapter": number (required),
+  "verses": [number | VerseRange] (required)
+}
+
+// VerseRange object:
+{
+  "start": number (required),
+  "end": number (optional)
+}`}
+            </pre>
+          </div>
+
+          <div>
+            <h3 className="text-lg font-semibold mb-3">Request Parameters</h3>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse border border-border">
+                <thead>
+                  <tr className="bg-muted">
+                    <th className="border border-border px-4 py-2 text-left">Parameter</th>
+                    <th className="border border-border px-4 py-2 text-left">Type</th>
+                    <th className="border border-border px-4 py-2 text-left">Required</th>
+                    <th className="border border-border px-4 py-2 text-left">Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="border border-border px-4 py-2 font-mono text-sm">book</td>
+                    <td className="border border-border px-4 py-2">string</td>
+                    <td className="border border-border px-4 py-2">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-red-100 text-red-800">Required</span>
+                    </td>
+                    <td className="border border-border px-4 py-2">
+                      English book name (e.g., "John", "Genesis", "Matthew")
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="border border-border px-4 py-2 font-mono text-sm">chapter</td>
+                    <td className="border border-border px-4 py-2">number</td>
+                    <td className="border border-border px-4 py-2">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-red-100 text-red-800">Required</span>
+                    </td>
+                    <td className="border border-border px-4 py-2">
+                      Chapter number (1-150)
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="border border-border px-4 py-2 font-mono text-sm">verses</td>
+                    <td className="border border-border px-4 py-2">array</td>
+                    <td className="border border-border px-4 py-2">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-red-100 text-red-800">Required</span>
+                    </td>
+                    <td className="border border-border px-4 py-2">
+                      Array of verse numbers or verse ranges (max 10 items)
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-lg font-semibold mb-3">Response Schema</h3>
+            <pre className="bg-muted p-4 rounded overflow-x-auto text-sm">
+{`{
+  "text": "string",           // Combined text of all verses
+  "reference": "string",      // Reference with Malagasy book name
+  "book": "string",           // Malagasy book name
+  "bookId": "string",         // Internal book ID
+  "chapter": "string",        // Chapter number
+  "verses": ["string"],       // Array of verse numbers found
+  "requestedCount": number,   // Number of verses requested
+  "foundCount": number,       // Number of verses found
+  "executionTime": number     // Execution time in milliseconds
+}`}
+            </pre>
+          </div>
+
+          <div>
+            <h3 className="text-lg font-semibold mb-3">Example Requests</h3>
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-medium mb-2">Single Verse</h4>
+                <pre className="bg-muted p-4 rounded overflow-x-auto text-sm">
+{`curl -X POST "/api/search-reference" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "book": "John",
+    "chapter": 3,
+    "verses": [16]
+  }'`}
+                </pre>
+              </div>
+              <div>
+                <h4 className="font-medium mb-2">Multiple Verses and Ranges</h4>
+                <pre className="bg-muted p-4 rounded overflow-x-auto text-sm">
+{`curl -X POST "/api/search-reference" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "book": "Romans",
+    "chapter": 8,
+    "verses": [{"start": 1, "end": 3}, 28, 35]
+  }'`}
+                </pre>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Random Verse API (bible-api.com compatible) */}
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-cyan-100 text-cyan-800">GET</span>
+            Random Verse (Bible API Compatible)
+          </CardTitle>
+          <CardDescription>
+            Get a random Bible verse in bible-api.com compatible format with Malagasy content
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div>
+            <h3 className="text-lg font-semibold mb-3">Endpoint</h3>
+            <code className="bg-muted px-3 py-2 rounded block text-sm">
+              GET /api/random-verse
+            </code>
+          </div>
+
+          <div>
+            <h3 className="text-lg font-semibold mb-3">Response Schema</h3>
+            <pre className="bg-muted p-4 rounded overflow-x-auto text-sm">
+{`{
+  "translation": {
+    "identifier": "malagasy",
+    "name": "Baiboly Malagasy",
+    "language": "Malagasy",
+    "language_code": "mg",
+    "license": "Public Domain"
+  },
+  "random_verse": {
+    "book_id": "string",        // Bible API format (e.g., "JHN", "GEN")
+    "book": "string",           // Malagasy book name
+    "chapter": number,          // Chapter number
+    "verse": number,            // Verse number
+    "text": "string"            // Verse text in Malagasy
+  }
+}`}
+            </pre>
+          </div>
+
+          <div>
+            <h3 className="text-lg font-semibold mb-3">Example Request</h3>
+            <pre className="bg-muted p-4 rounded overflow-x-auto text-sm">
+{`curl -X GET "/api/random-verse"`}
+            </pre>
+          </div>
+
+          <div>
+            <h3 className="text-lg font-semibold mb-3">Example Response</h3>
+            <pre className="bg-muted p-4 rounded overflow-x-auto text-sm">
+{`{
+  "translation": {
+    "identifier": "malagasy",
+    "name": "Baiboly Malagasy",
+    "language": "Malagasy",
+    "language_code": "mg",
+    "license": "Public Domain"
+  },
+  "random_verse": {
+    "book_id": "JHN",
+    "book": "Jaona",
+    "chapter": 3,
+    "verse": 16,
+    "text": "Fa toy izao no nitiavan'Andriamanitra izao tontolo izao..."
+  }
+}`}
+            </pre>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Response Format */}
       <Card className="mb-8">
         <CardHeader>
@@ -528,7 +745,7 @@ const ApiDocumentationPage = () => {
           <div>
             <h3 className="text-lg font-semibold mb-3">JavaScript/Fetch Example</h3>
             <pre className="bg-muted p-4 rounded overflow-x-auto text-sm">
-{`// Simple search using fetch
+{`// Text search using fetch
 async function searchBible(query) {
   try {
     const response = await fetch(\`/api/search?q=\${encodeURIComponent(query)}\`);
@@ -544,6 +761,49 @@ async function searchBible(query) {
   } catch (error) {
     console.error('Network error:', error);
     return [];
+  }
+}
+
+// Reference search for specific verses
+async function searchReference(book, chapter, verses) {
+  try {
+    const response = await fetch('/api/search-reference', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        book,
+        chapter,
+        verses
+      })
+    });
+    
+    const result = await response.json();
+    if (response.ok) {
+      console.log('Reference found:', result);
+      return result;
+    } else {
+      console.error('Reference error:', result.error);
+      return null;
+    }
+  } catch (error) {
+    console.error('Network error:', error);
+    return null;
+  }
+}
+
+// Get random verse (bible-api.com compatible)
+async function getRandomVerse() {
+  try {
+    const response = await fetch('/api/random-verse');
+    const result = await response.json();
+    
+    console.log('Random verse:', result.random_verse);
+    return result;
+  } catch (error) {
+    console.error('Error getting random verse:', error);
+    return null;
   }
 }
 
@@ -571,6 +831,9 @@ async function advancedSearch(query, options = {}) {
 
 // Usage examples
 searchBible('fitiavana');
+searchReference('John', 3, [16]);
+searchReference('Romans', 8, [1, 2, 3, 28]);
+getRandomVerse();
 advancedSearch('Andriamanitra', {
   testament: 'new',
   limit: 10,

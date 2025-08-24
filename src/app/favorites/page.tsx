@@ -7,68 +7,66 @@
 
 import * as React from 'react';
 import Link from 'next/link';
+import type { Route } from 'next';
 import { Heart, Trash2, BookOpen, Calendar } from 'lucide-react';
 import { Layout } from '@/components/layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatDate } from '@/utils';
+import { useFavorites, type Favorite } from '@/contexts/FavoritesContext';
+import { ALL_BIBLE_BOOKS } from '@/constants/bible';
 
-interface Favorite {
-  id: string;
-  book: string;
-  bookId: string;
-  chapter: string;
-  verse: string;
-  text: string;
-  note?: string;
-  dateAdded: string;
+/**
+ * Convert Malagasy book name or fileName to English book ID for URL routing
+ */
+function getEnglishBookId(malagasyBookIdOrName: string): string {
+  // First, try to find by fileName (e.g., "genesisy" -> "genesis")
+  const bookByFileName = ALL_BIBLE_BOOKS.find(book => 
+    book.fileName.toLowerCase() === malagasyBookIdOrName.toLowerCase()
+  );
+  
+  if (bookByFileName) {
+    return bookByFileName.id;
+  }
+  
+  // Then try to find by Malagasy name (e.g., "Genesisy" -> "genesis")
+  const bookByName = ALL_BIBLE_BOOKS.find(book => 
+    book.name.toLowerCase() === malagasyBookIdOrName.toLowerCase()
+  );
+  
+  if (bookByName) {
+    return bookByName.id;
+  }
+  
+  // Fallback: try to clean up the input and match
+  const cleanInput = malagasyBookIdOrName
+    .toLowerCase()
+    .replace(/[^a-z0-9-]/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+    
+  const bookByCleanName = ALL_BIBLE_BOOKS.find(book => 
+    book.fileName === cleanInput || 
+    book.id === cleanInput ||
+    book.name.toLowerCase().replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-') === cleanInput
+  );
+  
+  if (bookByCleanName) {
+    return bookByCleanName.id;
+  }
+  
+  // If all else fails, return the input (hopefully it's already English)
+  console.warn(`Could not find English book ID for: ${malagasyBookIdOrName}`);
+  return malagasyBookIdOrName;
 }
 
 export default function FavoritesPage() {
-  const [favorites, setFavorites] = React.useState<Favorite[]>([]);
-  const [loading, setLoading] = React.useState(true);
+  const { favorites, removeFavorite, clearAllFavorites, exportFavorites } = useFavorites();
 
-  // Load favorites from localStorage on mount
-  React.useEffect(() => {
-    try {
-      const stored = localStorage.getItem('bible-favorites');
-      if (stored) {
-        setFavorites(JSON.parse(stored));
-      }
-    } catch (error) {
-      console.error('Error loading favorites:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  // Save favorites to localStorage whenever it changes
-  React.useEffect(() => {
-    if (!loading) {
-      localStorage.setItem('bible-favorites', JSON.stringify(favorites));
-    }
-  }, [favorites, loading]);
-
-  const removeFavorite = (id: string) => {
-    setFavorites(prev => prev.filter(fav => fav.id !== id));
+  const getVerseUrl = (bookId: string, chapter: string, verse: string): Route => {
+    const englishBookId = getEnglishBookId(bookId);
+    return `/books/${englishBookId}/${chapter}#verse-${verse}` as Route;
   };
-
-  const navigateToVerse = (bookId: string, chapter: string, verse: string) => {
-    window.location.href = `/books/${bookId}/${chapter}#verse-${verse}`;
-  };
-
-  if (loading) {
-    return (
-      <Layout>
-        <div className="text-center py-8">
-          <div className="inline-flex items-center space-x-2">
-            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary"></div>
-            <span className="text-muted-foreground">Mamaky...</span>
-          </div>
-        </div>
-      </Layout>
-    );
-  }
 
   return (
     <Layout>
@@ -156,7 +154,7 @@ export default function FavoritesPage() {
                   key={favorite.id}
                   favorite={favorite}
                   onRemove={() => removeFavorite(favorite.id)}
-                  onNavigate={() => navigateToVerse(favorite.bookId, favorite.chapter, favorite.verse)}
+                  verseUrl={getVerseUrl(favorite.bookId, favorite.chapter, favorite.verse)}
                 />
               ))}
           </div>
@@ -173,14 +171,7 @@ export default function FavoritesPage() {
                 <Button 
                   variant="outline"
                   onClick={() => {
-                    const data = JSON.stringify(favorites, null, 2);
-                    const blob = new Blob([data], { type: 'application/json' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'ny-baiboly-ankafiziko.json';
-                    a.click();
-                    URL.revokeObjectURL(url);
+                    exportFavorites();
                   }}
                 >
                   Halaina
@@ -190,7 +181,7 @@ export default function FavoritesPage() {
                   variant="outline"
                   onClick={() => {
                     if (confirm('Vonona ve ianareo hamafa ny ankafiziko rehetra?')) {
-                      setFavorites([]);
+                      clearAllFavorites();
                     }
                   }}
                   className="text-destructive hover:text-destructive"
@@ -213,10 +204,10 @@ export default function FavoritesPage() {
 interface FavoriteCardProps {
   favorite: Favorite;
   onRemove: () => void;
-  onNavigate: () => void;
+  verseUrl: Route;
 }
 
-function FavoriteCard({ favorite, onRemove, onNavigate }: FavoriteCardProps) {
+function FavoriteCard({ favorite, onRemove, verseUrl }: FavoriteCardProps) {
   return (
     <Card className="group hover:shadow-md transition-shadow">
       <CardContent className="pt-6">
@@ -233,12 +224,11 @@ function FavoriteCard({ favorite, onRemove, onNavigate }: FavoriteCardProps) {
             </div>
 
             {/* Verse Text */}
-            <p 
-              className="text-foreground leading-relaxed cursor-pointer hover:text-primary transition-colors"
-              onClick={onNavigate}
-            >
-              {favorite.text}
-            </p>
+            <Link href={verseUrl}>
+              <p className="text-foreground leading-relaxed cursor-pointer hover:text-primary transition-colors">
+                {favorite.text}
+              </p>
+            </Link>
 
             {/* Note */}
             {favorite.note && (
@@ -251,8 +241,8 @@ function FavoriteCard({ favorite, onRemove, onNavigate }: FavoriteCardProps) {
 
             {/* Actions */}
             <div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-              <Button size="sm" variant="outline" onClick={onNavigate}>
-                Jereo
+              <Button size="sm" variant="outline" asChild>
+                <Link href={verseUrl}>Jereo</Link>
               </Button>
               <Button 
                 size="sm" 

@@ -17,6 +17,7 @@ import {
   Shuffle,
   BookOpen
 } from 'lucide-react';
+import { useFavorites } from '@/contexts/FavoritesContext';
 
 interface SubMenuItem {
   href: string;
@@ -107,6 +108,7 @@ const secondaryItems: NavItem[] = [
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const { favorites } = useFavorites();
 
   const isActive = (href: string) => {
     if (href === '/') {
@@ -115,26 +117,42 @@ const Navbar: React.FC = () => {
     return pathname.startsWith(href);
   };
 
-  const NavLink: React.FC<{ item: NavItem; mobile?: boolean }> = ({ item, mobile = false }) => (
-    <Link
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      href={item.href as any}
-      onClick={() => mobile && setIsOpen(false)}
-      className={`
-        flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200
-        hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300
-        ${isActive(item.href) 
-          ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-medium' 
-          : 'text-gray-700 dark:text-gray-300'
-        }
-        ${mobile ? 'w-full justify-start text-base' : 'text-sm'}
-      `}
-      title={item.description}
-    >
-      {item.icon}
-      <span className={mobile ? 'block' : 'hidden lg:block'}>{item.label}</span>
-    </Link>
-  );
+  const NavLink: React.FC<{ item: NavItem; mobile?: boolean }> = ({ item, mobile = false }) => {
+    const showBadge = item.href === '/favorites' && favorites.length > 0;
+    
+    return (
+      <Link
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        href={item.href as any}
+        onClick={() => mobile && setIsOpen(false)}
+        className={`
+          flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 relative
+          hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300
+          ${isActive(item.href) 
+            ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-medium' 
+            : 'text-gray-700 dark:text-gray-300'
+          }
+          ${mobile ? 'w-full justify-start text-base' : 'text-sm'}
+        `}
+        title={item.description}
+      >
+        <div className="relative">
+          {item.icon}
+          {showBadge && (
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+              {favorites.length > 99 ? '99+' : favorites.length}
+            </span>
+          )}
+        </div>
+        <span className={mobile ? 'block' : 'hidden lg:block'}>{item.label}</span>
+        {showBadge && mobile && (
+          <span className="ml-auto bg-red-500 text-white text-xs rounded-full px-2 py-1">
+            {favorites.length}
+          </span>
+        )}
+      </Link>
+    );
+  };
 
   return (
     <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">

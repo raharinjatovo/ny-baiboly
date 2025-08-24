@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Copy, Share2, BookOpen, Clock, CheckCircle } from 'lucide-react';
+import { CompactFavoriteButton } from '@/components/favorites/FavoriteButton';
 
 interface VerseResult {
   book: string;
@@ -157,6 +158,17 @@ const VerseDisplay: React.FC<VerseDisplayProps> = ({ searchResult, className = '
               </h3>
               
               <div className="flex items-center space-x-2">
+                <CompactFavoriteButton
+                  bookId={verse.bookId}
+                  chapter={verse.chapter}
+                  verse={verse.verse}
+                  verseData={{
+                    book: verse.book,
+                    text: verse.text,
+                    reference: verse.reference,
+                  }}
+                />
+                
                 <button
                   onClick={() => copyToClipboard(verse)}
                   className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 

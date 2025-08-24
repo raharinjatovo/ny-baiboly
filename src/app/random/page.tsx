@@ -8,7 +8,30 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { RefreshCw, Book, Heart, Share2 } from 'lucide-react';
+import { RefreshCw, Book, Share2 } from 'lucide-react';
+import { DetailedFavoriteButton } from '@/components/favorites/FavoriteButton';
+import { ALL_BIBLE_BOOKS } from '@/constants/bible';
+
+/**
+ * Convert Malagasy book name to English book ID for consistency
+ */
+function getCorrectBookId(malagasyBookName: string): string {
+  // Find by Malagasy name
+  const book = ALL_BIBLE_BOOKS.find(book => 
+    book.name.toLowerCase() === malagasyBookName.toLowerCase()
+  );
+  
+  if (book) {
+    return book.id;
+  }
+  
+  // Fallback to sanitized name if not found
+  return malagasyBookName.toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
 
 interface RandomVerseApiResponse {
   translation: {
@@ -94,15 +117,9 @@ const RandomVersesPage = () => {
     }
   };
 
-  const addToFavorites = () => {
-    if (!verse) {return;}
-    // This would integrate with your favorites system
-    console.info('Adding to favorites:', verse.random_verse);
-    // You could add a toast notification here
-  };
-
   return (
-    <div className="container mx-auto py-8 px-4 max-w-4xl">
+    <div className="container mx-auto px-4 py-8 max-w-2xl">
+      {/* Page Header */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-4 flex items-center gap-3">
           <Book className="h-8 w-8" />
@@ -157,15 +174,19 @@ const RandomVersesPage = () => {
                 
                 {/* Action Buttons */}
                 <div className="flex items-center gap-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={addToFavorites}
-                    className="h-8 w-8 p-0"
-                    title="Atao ankafiziko"
-                  >
-                    <Heart className="h-4 w-4" />
-                  </Button>
+                  <DetailedFavoriteButton
+                    bookId={getCorrectBookId(verse.random_verse.book)}
+                    chapter={verse.random_verse.chapter.toString()}
+                    verse={verse.random_verse.verse.toString()}
+                    verseData={{
+                      book: verse.random_verse.book,
+                      text: verse.random_verse.text,
+                      reference: `${verse.random_verse.book} ${verse.random_verse.chapter}:${verse.random_verse.verse}`,
+                    }}
+                    onToggle={(isFavorited) => {
+                      console.info(`Random verse ${isFavorited ? 'added to' : 'removed from'} favorites`);
+                    }}
+                  />
                   <Button
                     variant="ghost"
                     size="sm"

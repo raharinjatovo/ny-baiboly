@@ -11,14 +11,11 @@ import { Heart, Bookmark } from 'lucide-react';
 import { cn } from '@/utils';
 import { Button } from '@/components/ui/button';
 import { 
-  addToFavorites, 
-  isInFavorites, 
-  removeFromFavorites,
   addReadingBookmark,
   isBookmarked,
   removeReadingBookmark
 } from '@/lib/favorites';
-import { BibleVerse } from '@/types/bible';
+import { useFavorites } from '@/contexts/FavoritesContext';
 
 interface VerseProps {
   number: string;
@@ -50,13 +47,19 @@ export function Verse({
   onVerseClick,
   className,
 }: VerseProps) {
-  const [isFavorite, setIsFavorite] = React.useState(false);
+  const { isFavorite, toggleFavorite } = useFavorites();
   const [isBookmarkActive, setIsBookmarkActive] = React.useState(false);
 
   // Check if verse is in favorites on mount and when props change
+  const isFavorited = React.useMemo(() => {
+    if (book && chapter && number) {
+      return isFavorite(bookId || book, chapter, number);
+    }
+    return false;
+  }, [book, bookId, chapter, number, isFavorite]);
+
   React.useEffect(() => {
     if (book && chapter && number) {
-      setIsFavorite(isInFavorites(book, chapter, number));
       setIsBookmarkActive(isBookmarked(bookId || book, chapter, number));
     }
   }, [book, bookId, chapter, number]);
@@ -70,15 +73,16 @@ export function Verse({
     
     if (!book || !chapter || !number) {return;}
     
-    if (isFavorite) {
-      const verseId = `${book}-${chapter}-${number}`;
-      removeFromFavorites(verseId);
-      setIsFavorite(false);
-    } else {
-      const verse: BibleVerse = { book, chapter, verse: number, text };
-      addToFavorites(verse);
-      setIsFavorite(true);
-    }
+    const verseData = {
+      book,
+      bookId: bookId || book,
+      chapter,
+      verse: number,
+      text,
+      reference: `${book} ${chapter}:${number}`,
+    };
+    
+    toggleFavorite(verseData);
   };
 
   const handleBookmarkToggle = (e: React.MouseEvent) => {
@@ -137,12 +141,12 @@ export function Verse({
             size="sm"
             className={cn(
               "h-6 w-6 p-0",
-              isFavorite && "text-red-500 hover:text-red-600"
+              isFavorited && "text-red-500 hover:text-red-600"
             )}
             onClick={handleFavoriteToggle}
-            title={isFavorite ? "Esorina amin'ny ankafiziko" : "Ampidiro amin'ny ankafiziko"}
+            title={isFavorited ? "Esorina amin'ny ankafiziko" : "Ampidiro amin'ny ankafiziko"}
           >
-            <Heart className={cn("h-3 w-3", isFavorite && "fill-current")} />
+            <Heart className={cn("h-3 w-3", isFavorited && "fill-current")} />
           </Button>
           
           <Button
@@ -170,6 +174,9 @@ interface ChapterProps {
   highlightedVerse?: string;
   searchTerm?: string;
   showVerseNumbers?: boolean;
+  showActions?: boolean;
+  book?: string;
+  bookId?: string;
   onVerseClick?: (verseNumber: string) => void;
   className?: string;
 }
@@ -184,6 +191,9 @@ export function Chapter({
   highlightedVerse,
   searchTerm,
   showVerseNumbers = true,
+  showActions = false,
+  book,
+  bookId,
   onVerseClick,
   className,
 }: ChapterProps) {
@@ -211,9 +221,13 @@ export function Chapter({
               <Verse
                 number={verseNumber}
                 text={verseText}
+                book={book || bookName}
+                bookId={bookId}
+                chapter={chapterNumber}
                 highlighted={highlightedVerse === verseNumber}
                 searchTerm={searchTerm}
                 showNumber={showVerseNumbers}
+                showActions={showActions}
                 onVerseClick={onVerseClick}
               />
               {index < verseEntries.length - 1 && ' '}

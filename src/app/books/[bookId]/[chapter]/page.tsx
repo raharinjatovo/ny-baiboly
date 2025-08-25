@@ -6,7 +6,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, BookOpen, Heart } from "lucide-react";
+import { ChevronLeft, ChevronRight, BookOpen } from "lucide-react";
 import { Layout } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Chapter, BibleBreadcrumb } from "@/components/bible/verse-display";
@@ -118,6 +118,9 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
             chapterNumber={chapter}
             verses={verses}
             showVerseNumbers={true}
+            showActions={true}
+            book={bookMeta.name}
+            bookId={bookId}
           />
         </div>
 
@@ -135,9 +138,6 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
           </div>
 
           <div className="flex items-center space-x-2">
-            <Button variant="outline" size="icon">
-              <Heart className="h-4 w-4" />
-            </Button>
             <Button variant="outline" size="icon">
               <BookOpen className="h-4 w-4" />
             </Button>

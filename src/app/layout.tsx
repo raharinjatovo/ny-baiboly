@@ -5,6 +5,7 @@ import "./globals.css";
 import Navbar from "@/components/navigation/navbar";
 import Footer from "@/components/navigation/footer";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
+import { LoadingProvider } from "@/contexts/LoadingContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -49,14 +50,16 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
-        <FavoritesProvider>
-          <Navbar />
-          <main className="flex-1">
-            {children}
-             <Analytics />
-          </main>
-          <Footer />
-        </FavoritesProvider>
+        <LoadingProvider>
+          <FavoritesProvider>
+            <Navbar />
+            <main className="flex-1">
+              {children}
+               <Analytics />
+            </main>
+            <Footer />
+          </FavoritesProvider>
+        </LoadingProvider>
       </body>
     </html>
   );

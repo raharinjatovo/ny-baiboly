@@ -9,6 +9,7 @@ import { Layout } from "@/components/layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BibleBookGrid } from "@/components/bible/book-card";
+import { BookNavigationButton } from "@/components/navigation/BookNavigationButton";
 import { OLD_TESTAMENT_BOOKS, NEW_TESTAMENT_BOOKS } from "@/constants/bible";
 
 export default function HomePage() {
@@ -133,11 +134,13 @@ export default function HomePage() {
             Manomboka amin'ny boky voalohany na mitady zavatra manokana.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg">
-              <Link href="/books/genesis" as="/books/genesis">
-                Manomboka amin'ny Genesisy
-              </Link>
-            </Button>
+            <BookNavigationButton 
+              bookId="genesis" 
+              size="lg"
+              loadingText="Misokatra ny Genesisy..."
+            >
+              Manomboka amin'ny Genesisy
+            </BookNavigationButton>
             <Button asChild variant="outline" size="lg">
               <Link href="/books">
                 Hizaha ny boky rehetra

@@ -8,12 +8,11 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, BookOpen } from "lucide-react";
 import { Layout } from "@/components/layout";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BibleBreadcrumb } from "@/components/bible/verse-display";
 import { getBibleBook } from "@/lib/bible-data";
 import { getBookById } from "@/lib/bible-data";
-import { cn } from "@/utils";
+import { ChapterNavigationCard, ChapterNavigationButton } from "@/components/navigation/ChapterNavigationCard";
 
 interface BookPageProps {
   params: Promise<{ bookId: string }>;
@@ -106,7 +105,7 @@ export default async function BookPage({ params }: BookPageProps) {
           
           <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-3">
             {chapters.map((chapterNum) => (
-              <ChapterCard
+              <ChapterNavigationCard
                 key={chapterNum}
                 bookId={book.id}
                 chapterNumber={chapterNum}
@@ -121,11 +120,13 @@ export default async function BookPage({ params }: BookPageProps) {
             Fiasa haingana
           </h3>
           <div className="flex flex-wrap gap-3">
-            <Button asChild variant="outline">
-              <Link href={`/books/${book.id}/1`}>
-                Manomboka amin'ny toko voalohany
-              </Link>
-            </Button>
+            <ChapterNavigationButton
+              bookId={book.id}
+              chapterNumber="1"
+              variant="outline"
+            >
+              Manomboka amin'ny toko voalohany
+            </ChapterNavigationButton>
             <Button asChild variant="outline">
               <Link href={`/search?book=${book.id}`}>
                 Hitady amin'ity boky ity
@@ -135,32 +136,5 @@ export default async function BookPage({ params }: BookPageProps) {
         </div>
       </div>
     </Layout>
-  );
-}
-
-/**
- * Chapter card component
- */
-interface ChapterCardProps {
-  bookId: string;
-  chapterNumber: string;
-  className?: string;
-}
-
-function ChapterCard({ bookId, chapterNumber, className }: ChapterCardProps) {
-  return (
-    <Link href={`/books/${bookId}/${chapterNumber}`}>
-      <Card className={cn(
-        "group cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-0.5",
-        "text-center h-16 flex items-center justify-center",
-        className
-      )}>
-        <CardContent className="p-0">
-          <span className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
-            {chapterNumber}
-          </span>
-        </CardContent>
-      </Card>
-    </Link>
   );
 }

@@ -394,15 +394,10 @@ export async function searchBible(
                 relevance,
               });
 
-              // Stop if we've reached the limit
-              if (results.length >= limit) {
-                break;
-              }
+              // Don't break early - collect all results first
             }
           }
-          if (results.length >= limit) {break;}
         }
-        if (results.length >= limit) {break;}
       } catch (error) {
         console.error(`Error searching book ${bookMeta.id}:`, error);
         // Continue with other books

@@ -161,14 +161,14 @@ const SearchReferencePage: React.FC = () => {
   };
 
   const breadcrumbItems = [
-    { label: 'Search', href: '/search' },
-    { label: 'Reference Search', current: true },
+    { label: 'Fikarohana', href: '/search' },
+    { label: 'Fikarohana andinin-tsoratra', current: true },
   ];
 
   return (
     <PageLayout
-      title="Bible Reference Search"
-      description="Search for specific Bible verses by book, chapter, and verse numbers"
+      title="Fikarohana andinin-tsoratra"
+      description="Hitadiavo andinin-tsoratra manokana amin'ny alalan'ny boky, toko, ary isa andinin-tsoratra"
       breadcrumbs={breadcrumbItems}
     >
       <div className="max-w-4xl mx-auto space-y-8">
@@ -180,11 +180,11 @@ const SearchReferencePage: React.FC = () => {
             </div>
           </div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-            Bible Reference Search
+            Fikarohana andinin-tsoratra
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Find specific Bible verses by entering the book name, chapter, and verse numbers. 
-            You can search for single verses, multiple verses, or verse ranges.
+            Hitadiavo andinin-tsoratra manokana amin'ny fanoratana ny anaran'ny boky, toko, ary isa andinin-tsoratra. 
+            Azonao atao ny mitady andinin-tsoratra tokana, maro, na andiany.
           </p>
         </div>
 
@@ -195,22 +195,22 @@ const SearchReferencePage: React.FC = () => {
           <div className="flex items-center mb-3">
             <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400 mr-2" />
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-              Search Examples
+              Ohatra fikarohana
             </h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             <div>
-              <strong>Single verse:</strong>
+              <strong>Andinin-tsoratra tokana:</strong>
               <ul className="text-gray-600 dark:text-gray-400 mt-1 space-y-1">
-                <li>• Book: "John", Chapter: 3, Verses: "16"</li>
-                <li>• Book: "Genesis", Chapter: 1, Verses: "1"</li>
+                <li>• Boky: "Jaona", Toko: 3, Andinin-tsoratra: "16"</li>
+                <li>• Boky: "Genesisy", Toko: 1, Andinin-tsoratra: "1"</li>
               </ul>
             </div>
             <div>
-              <strong>Multiple verses:</strong>
+              <strong>Andinin-tsoratra maro:</strong>
               <ul className="text-gray-600 dark:text-gray-400 mt-1 space-y-1">
-                <li>• Book: "Psalm", Chapter: 23, Verses: "1,4,6"</li>
-                <li>• Book: "Romans", Chapter: 8, Verses: "1-5,28"</li>
+                <li>• Boky: "Salamo", Toko: 23, Andinin-tsoratra: "1,4,6"</li>
+                <li>• Boky: "Romanina", Toko: 8, Andinin-tsoratra: "1-5,28"</li>
               </ul>
             </div>
           </div>
@@ -231,7 +231,7 @@ const SearchReferencePage: React.FC = () => {
               <div className="flex items-center">
                 <History className="w-5 h-5 text-gray-600 dark:text-gray-400 mr-2" />
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                  Recent Searches
+                  Fikarohana farany
                 </h3>
               </div>
               <button
@@ -239,7 +239,7 @@ const SearchReferencePage: React.FC = () => {
                 className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 
                          dark:hover:text-gray-200 transition-colors"
               >
-                Clear history
+                Fafao ny tantara
               </button>
             </div>
             

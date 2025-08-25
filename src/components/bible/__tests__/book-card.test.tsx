@@ -173,7 +173,7 @@ describe('BibleBookGrid', () => {
     const links = screen.getAllByRole('link');
     expect(links).toHaveLength(mockBooks.length);
     
-    links.forEach((link) => {
+    links.forEach((link: HTMLElement) => {
       expect(link).toHaveAccessibleName();
     });
   });

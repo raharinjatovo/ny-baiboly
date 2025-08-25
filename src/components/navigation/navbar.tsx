@@ -114,7 +114,20 @@ const Navbar: React.FC = () => {
     if (href === '/') {
       return pathname === '/';
     }
-    return pathname.startsWith(href);
+    // Exact match first
+    if (pathname === href) {
+      return true;
+    }
+    // For sub-routes, only consider active if it's the most specific match
+    if (pathname.startsWith(href + '/')) {
+      // Check if there's a more specific route that should be active instead
+      const moreSpecificRoutes = navigationItems
+        .filter(item => item.href !== href && item.href.startsWith(href) && pathname.startsWith(item.href))
+        .sort((a, b) => b.href.length - a.href.length);
+      
+      return moreSpecificRoutes.length === 0;
+    }
+    return false;
   };
 
   const NavLink: React.FC<{ item: NavItem; mobile?: boolean }> = ({ item, mobile = false }) => {

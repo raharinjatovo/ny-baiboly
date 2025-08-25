@@ -30,25 +30,25 @@ const ApiDocumentationPage = () => {
             <div className="space-y-2">
               <div>
                 <code className="bg-muted px-3 py-1 rounded text-sm mr-2">
-                  /api/search
+                  https://ny-baiboly.vercel.app/api/search
                 </code>
                 <span className="text-sm text-muted-foreground">Search Bible verses by text content</span>
               </div>
               <div>
                 <code className="bg-muted px-3 py-1 rounded text-sm mr-2">
-                  /api/search-reference
+                  https://ny-baiboly.vercel.app/api/search-reference
                 </code>
                 <span className="text-sm text-muted-foreground">Get specific verses by reference (book, chapter, verses)</span>
               </div>
               <div>
                 <code className="bg-muted px-3 py-1 rounded text-sm mr-2">
-                  /api/random-verse
+                  https://ny-baiboly.vercel.app/api/random-verse
                 </code>
                 <span className="text-sm text-muted-foreground">Get random Bible verses (bible-api.com compatible)</span>
               </div>
               <div>
                 <code className="bg-muted px-3 py-1 rounded text-sm mr-2">
-                  /api/random
+                  https://ny-baiboly.vercel.app/api/random
                 </code>
                 <span className="text-sm text-muted-foreground">Get random Bible verses with filtering options</span>
               </div>
@@ -79,7 +79,7 @@ const ApiDocumentationPage = () => {
           <div>
             <h3 className="text-lg font-semibold mb-3">Endpoint</h3>
             <code className="bg-muted px-3 py-2 rounded block text-sm">
-              GET /api/search?q={'{'}query{'}'}&testament={'{'}testament{'}'}&caseSensitive={'{'}boolean{'}'}&limit={'{'}number{'}'}
+              GET https://ny-baiboly.vercel.app/api/search?q={'{'}query{'}'}&testament={'{'}testament{'}'}&caseSensitive={'{'}boolean{'}'}&limit={'{'}number{'}'}
             </code>
           </div>
 
@@ -144,7 +144,7 @@ const ApiDocumentationPage = () => {
           <div>
             <h3 className="text-lg font-semibold mb-3">Example Request</h3>
             <pre className="bg-muted p-4 rounded overflow-x-auto text-sm">
-{`curl -X GET "/api/search?q=fitiavana&testament=new&limit=10"`}
+{`curl -X GET "https://ny-baiboly.vercel.app/api/search?q=fitiavana&testament=new&limit=10"`}
             </pre>
           </div>
         </CardContent>
@@ -165,7 +165,7 @@ const ApiDocumentationPage = () => {
           <div>
             <h3 className="text-lg font-semibold mb-3">Endpoint</h3>
             <code className="bg-muted px-3 py-2 rounded block text-sm">
-              POST /api/search
+              POST https://ny-baiboly.vercel.app/api/search
             </code>
           </div>
 
@@ -255,7 +255,7 @@ const ApiDocumentationPage = () => {
           <div>
             <h3 className="text-lg font-semibold mb-3">Example Request</h3>
             <pre className="bg-muted p-4 rounded overflow-x-auto text-sm">
-{`curl -X POST "/api/search" \\
+{`curl -X POST "https://ny-baiboly.vercel.app/api/search" \\
   -H "Content-Type: application/json" \\
   -d '{
     "query": "Andriamanitra fitiavana",
@@ -286,7 +286,7 @@ const ApiDocumentationPage = () => {
           <div>
             <h3 className="text-lg font-semibold mb-3">Endpoint</h3>
             <code className="bg-muted px-3 py-2 rounded block text-sm">
-              GET /api/random?count={'{'}number{'}'}&testament={'{'}testament{'}'}&books={'{'}books{'}'}
+              GET https://ny-baiboly.vercel.app/api/random?count={'{'}number{'}'}&testament={'{'}testament{'}'}&books={'{'}books{'}'}
             </code>
           </div>
 
@@ -344,13 +344,13 @@ const ApiDocumentationPage = () => {
               <div>
                 <h4 className="font-medium mb-2">Single Random Verse</h4>
                 <pre className="bg-muted p-4 rounded overflow-x-auto text-sm">
-{`curl -X GET "/api/random"`}
+{`curl -X GET "https://ny-baiboly.vercel.app/api/random"`}
                 </pre>
               </div>
               <div>
                 <h4 className="font-medium mb-2">Multiple Verses from New Testament</h4>
                 <pre className="bg-muted p-4 rounded overflow-x-auto text-sm">
-{`curl -X GET "/api/random?count=3&testament=new"`}
+{`curl -X GET "https://ny-baiboly.vercel.app/api/random?count=3&testament=new"`}
                 </pre>
               </div>
             </div>
@@ -373,7 +373,7 @@ const ApiDocumentationPage = () => {
           <div>
             <h3 className="text-lg font-semibold mb-3">Endpoint</h3>
             <code className="bg-muted px-3 py-2 rounded block text-sm">
-              POST /api/search-reference
+              POST https://ny-baiboly.vercel.app/api/search-reference
             </code>
           </div>
 
@@ -465,7 +465,7 @@ const ApiDocumentationPage = () => {
               <div>
                 <h4 className="font-medium mb-2">Single Verse</h4>
                 <pre className="bg-muted p-4 rounded overflow-x-auto text-sm">
-{`curl -X POST "/api/search-reference" \\
+{`curl -X POST "https://ny-baiboly.vercel.app/api/search-reference" \\
   -H "Content-Type: application/json" \\
   -d '{
     "book": "John",
@@ -477,7 +477,7 @@ const ApiDocumentationPage = () => {
               <div>
                 <h4 className="font-medium mb-2">Multiple Verses and Ranges</h4>
                 <pre className="bg-muted p-4 rounded overflow-x-auto text-sm">
-{`curl -X POST "/api/search-reference" \\
+{`curl -X POST "https://ny-baiboly.vercel.app/api/search-reference" \\
   -H "Content-Type: application/json" \\
   -d '{
     "book": "Romans",
@@ -506,7 +506,7 @@ const ApiDocumentationPage = () => {
           <div>
             <h3 className="text-lg font-semibold mb-3">Endpoint</h3>
             <code className="bg-muted px-3 py-2 rounded block text-sm">
-              GET /api/random-verse
+              GET https://ny-baiboly.vercel.app/api/random-verse
             </code>
           </div>
 
@@ -535,7 +535,7 @@ const ApiDocumentationPage = () => {
           <div>
             <h3 className="text-lg font-semibold mb-3">Example Request</h3>
             <pre className="bg-muted p-4 rounded overflow-x-auto text-sm">
-{`curl -X GET "/api/random-verse"`}
+{`curl -X GET "https://ny-baiboly.vercel.app/api/random-verse"`}
             </pre>
           </div>
 
@@ -748,7 +748,7 @@ const ApiDocumentationPage = () => {
 {`// Text search using fetch
 async function searchBible(query) {
   try {
-    const response = await fetch(\`/api/search?q=\${encodeURIComponent(query)}\`);
+    const response = await fetch(\`https://ny-baiboly.vercel.app/api/search?q=\${encodeURIComponent(query)}\`);
     const result = await response.json();
     
     if (result.success) {
@@ -767,7 +767,7 @@ async function searchBible(query) {
 // Reference search for specific verses
 async function searchReference(book, chapter, verses) {
   try {
-    const response = await fetch('/api/search-reference', {
+    const response = await fetch('https://ny-baiboly.vercel.app/api/search-reference', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -796,7 +796,7 @@ async function searchReference(book, chapter, verses) {
 // Get random verse (bible-api.com compatible)
 async function getRandomVerse() {
   try {
-    const response = await fetch('/api/random-verse');
+    const response = await fetch('https://ny-baiboly.vercel.app/api/random-verse');
     const result = await response.json();
     
     console.log('Random verse:', result.random_verse);
@@ -810,7 +810,7 @@ async function getRandomVerse() {
 // Advanced search with options
 async function advancedSearch(query, options = {}) {
   try {
-    const response = await fetch('/api/search', {
+    const response = await fetch('https://ny-baiboly.vercel.app/api/search', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -862,7 +862,7 @@ function useBibleSearch() {
     setError(null);
 
     try {
-      const response = await fetch('/api/search', {
+      const response = await fetch('https://ny-baiboly.vercel.app/api/search', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query, options })

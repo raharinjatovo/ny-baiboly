@@ -113,7 +113,7 @@ const ApiDocumentationPage = () => {
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-gray-100 text-gray-800">Optional</span>
                     </td>
                     <td className="border border-border px-4 py-2">
-                      Filter by testament. Values: <code>&quot;old&quot;</code> or <code>&quot;new&quot;</code>
+                      Filter by testament. Values: <code>&quot;old&quot;</code>, <code>&quot;new&quot;</code>, or omit to search all testaments
                     </td>
                   </tr>
                   <tr>
@@ -142,10 +142,21 @@ const ApiDocumentationPage = () => {
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold mb-3">Example Request</h3>
-            <pre className="bg-muted p-4 rounded overflow-x-auto text-sm">
+            <h3 className="text-lg font-semibold mb-3">Example Requests</h3>
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-medium mb-2">Search in New Testament only</h4>
+                <pre className="bg-muted p-4 rounded overflow-x-auto text-sm">
 {`curl -X GET "https://ny-baiboly.vercel.app/api/search?q=fitiavana&testament=new&limit=10"`}
-            </pre>
+                </pre>
+              </div>
+              <div>
+                <h4 className="font-medium mb-2">Search in all testaments</h4>
+                <pre className="bg-muted p-4 rounded overflow-x-auto text-sm">
+{`curl -X GET "https://ny-baiboly.vercel.app/api/search?q=Andriamanitra&limit=20"`}
+                </pre>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -224,7 +235,7 @@ const ApiDocumentationPage = () => {
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-gray-100 text-gray-800">Optional</span>
                     </td>
                     <td className="border border-border px-4 py-2">
-                      Filter by testament. Values: <code>&quot;old&quot;</code> or <code>&quot;new&quot;</code>
+                      Filter by testament. Values: <code>&quot;old&quot;</code>, <code>&quot;new&quot;</code>, or omit to search all testaments
                     </td>
                   </tr>
                   <tr>
@@ -253,8 +264,11 @@ const ApiDocumentationPage = () => {
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold mb-3">Example Request</h3>
-            <pre className="bg-muted p-4 rounded overflow-x-auto text-sm">
+            <h3 className="text-lg font-semibold mb-3">Example Requests</h3>
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-medium mb-2">Search with Testament Filter</h4>
+                <pre className="bg-muted p-4 rounded overflow-x-auto text-sm">
 {`curl -X POST "https://ny-baiboly.vercel.app/api/search" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -266,7 +280,23 @@ const ApiDocumentationPage = () => {
       "books": ["1-jaona", "matio", "jaona"]
     }
   }'`}
-            </pre>
+                </pre>
+              </div>
+              <div>
+                <h4 className="font-medium mb-2">Search All Testaments</h4>
+                <pre className="bg-muted p-4 rounded overflow-x-auto text-sm">
+{`curl -X POST "https://ny-baiboly.vercel.app/api/search" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "query": "Andriamanitra",
+    "options": {
+      "limit": 50,
+      "caseSensitive": false
+    }
+  }'`}
+                </pre>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -320,7 +350,7 @@ const ApiDocumentationPage = () => {
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-gray-100 text-gray-800">Optional</span>
                     </td>
                     <td className="border border-border px-4 py-2">
-                      Filter by testament. Values: <code>&quot;old&quot;</code> or <code>&quot;new&quot;</code>
+                      Filter by testament. Values: <code>&quot;old&quot;</code>, <code>&quot;new&quot;</code>, or omit to search all testaments
                     </td>
                   </tr>
                   <tr>

@@ -59,6 +59,7 @@ export default async function BookPage({ params }: BookPageProps) {
   
   // Generate chapter list
   const chapters = Object.keys(book.chapters)
+    .filter(key => !isNaN(parseInt(key))) // Filter out non-numeric keys like "meta"
     .map(num => parseInt(num))
     .sort((a, b) => a - b)
     .map(num => num.toString());
